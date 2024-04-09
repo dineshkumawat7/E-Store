@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Login</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+  
+
+    <!-- Login Start -->
+    <div class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6">
+            <img src="/img/form-1.png" width="90%" height="90%" alt="">
+          </div>
+          <div class="col-lg-4" style="margin: auto;">
+
+            <div class="login-form">
+              <h4 class="text-center">
+                <b>SignIn</b>
+              </h4>
+              <hr>
+              <div id="msg" th:if="${param.error}">
+                <div style="padding: 6px;" class="alert alert-danger alert-dismissible fade show" role="alert">Invalid
+                  Email or Password
+                  <button style="padding: 11px;
+                                font-size: small;" type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+                </div>
+              </div>
+              <div id="msg" th:if="${param.logout}">
+                <div style="padding: 6px;" class="alert alert-success alert-dismissible fade show" role="alert">You have
+                  been logged out.
+                  <button style="padding: 11px;
+                                font-size: small;" type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+                </div>
+              </div>
+              <form id="login-form" action="/login" method="post" role="form">
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="small mb-1" for="username">Username/E-mail<span class="text-danger">*</span></label>
+                    <input class="form-control" id="username" type="text" placeholder="Enter your username or email.."
+                      name="username" required>
+                    <p id="usernameError" class="text-danger small" style="font-size: smaller;"></p>
+                  </div>
+
+                  <div class="col-md-12">
+                    <label class="small mb-1" for="password">Password<span class="text-danger">*</span></label>
+                    <div class="input-group" id="show_hide_password">
+                      <input style="border-radius: 4px;" class="form-control small" type="password"
+                        placeholder="Enter password.." name="password" id="password" required>
+                      <div class="input-group-addon">
+                        <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                      </div>
+                    </div>
+                    <p id="passwordError" class="text-danger small" style="font-size: smaller;"></p>
+                  </div>
+                  <div class="col-md-12">
+                    <a class="small mt-1" href="/forgot-password" style="float: right;"> <i class="fa fa-user-check"
+                        aria-hidden="true"></i>
+                      Forgot password?
+                    </a>
+                  </div>
+
+                  <div class="col-md-12 mt-2">
+                    <button type="submit" style="padding: 10px; width: 100%;" class="btn">Login</button>
+                  </div>
+                  <div class="col-md-12 small mt-2">
+                    Don't have an account? <a href="/registration">Signup</a>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Login End -->
+    <script>
+      if (performance.navigation.type == 1) {
+        window.location.href = "/login";
+      }
+
+      $("#show_hide_password a").on('click', function (event) {
+        event.preventDefault();
+        if ($('#show_hide_password input').attr("type") == "text") {
+          $('#show_hide_password input').attr('type', 'password');
+          $('#show_hide_password i').addClass("fa-eye-slash");
+          $('#show_hide_password i').removeClass("fa-eye");
+        } else if ($('#show_hide_password input').attr("type") == "password") {
+          $('#show_hide_password input').attr('type', 'text');
+          $('#show_hide_password i').removeClass("fa-eye-slash");
+          $('#show_hide_password i').addClass("fa-eye");
+        }
+      });
+    </script>
+  </div>
+</body>
+
+</html>

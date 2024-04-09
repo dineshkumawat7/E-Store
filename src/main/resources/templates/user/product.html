@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Products</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+    <!-- Product List Start -->
+    <div class="product-view">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-md-12 mb-4">
+                <div class="product-view-top">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="product-search">
+                        <input type="text" placeholder="Search">
+                        <button><i class="fa fa-search"></i></button>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="product-short">
+
+
+
+                        <div class="dropdown">
+
+
+                          <div class="dropdown-center">
+                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                              aria-expanded="false" id="dropdown-name">
+                              Product short by
+                            </button>
+                            <ul class="dropdown-menu" id="dropdown-category"
+                              style="border-radius: 5px;width: 100%;cursor: pointer;">
+                              <a href="#" class="dropdown-item">Newest</a>
+                              <a href="#" class="dropdown-item">Popular</a>
+                              <a href="#" class="dropdown-item">Most sale</a>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="product-price-range">
+                        <div class="dropdown">
+                          <div class="dropdown-toggle" data-toggle="dropdown">Product price
+                            range
+                          </div>
+                          <div id="dropdown-price" class="dropdown-menu dropdown-menu-right"
+                            style="border-radius: 5px;width: 100%;cursor: pointer;">
+                            <a href="#" class="dropdown-item">&#8377;0 to 50</a>
+                            <a href="#" class="dropdown-item">&#8377;51 to 100</a>
+                            <a href="#" class="dropdown-item">&#8377;101 to 150</a>
+                            <a href="#" class="dropdown-item">&#8377;151 to 200</a>
+                            <a href="#" class="dropdown-item">&#8377;201 to 300</a>
+                            <a href="#" class="dropdown-item">&#8377;301 to 400</a>
+                            <a href="#" class="dropdown-item">&#8377;401 to 500</a>
+                            <a href="#" class="dropdown-item">&#8377;501 to 1000</a>
+                            <a href="#" class="dropdown-item">up to &#8377;1000</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="loader-2">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" id="all-product-item" style="margin-left: 0;">
+                <!-- product data dynamically load -->
+              </div>
+            </div>
+
+
+            <div class="col-md-12 mb-4">
+              <div class="text-center">
+                <button id="load-more" class="btn" style="display: none;">
+                  <span id="btn-loader" style="padding: 0 35px; display: none;"><i
+                      class="fa fa-spinner fa-pulse"></i></span>
+                  <span id="load-more-text">Load more</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <!-- Product List End -->
+    <script>
+      $(document).ready(function () {
+
+        var currentPageInitial = 0;
+        var pageSize = 20;
+        function getAllProducts(currentPage) {
+          $('#loader-2').show();
+          $.ajax({
+            type: 'GET',
+            url: '/products',
+            contentType: 'application/json',
+            data: {
+              page: currentPage,
+              size: pageSize
+            },
+            success: function (response) {
+              var products = response.data.content;
+              const products_list = $('#all-product-item');
+              $.each(products, function (index, product) {
+                var row =
+                  '<div id="product" class="col-md-3">' +
+                  '<div class="product-item border">' +
+                  '<div class="product-image">' +
+                  '<a href="" id="product-detail" data-id="' + product.id + '">' +
+                  '<img src="' + product.imageUrl + '" alt="Product Image">' +
+                  '</a>' +
+                  '</div>' +
+                  '<div class="product-title">' +
+                  '<a href="#"  id="product-detail" data-id="' + product.id + '">' + product.name + '</a>' +
+                  '<div class="ratting">' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="product-price">' +
+                  '<div class="row">' +
+                  '<div class="col-md-4">' +
+                  '<h3><span>&#8377;</span>' + product.price + '</h3>' +
+                  '</div>' +
+                  '<div class="col-md-8 text-end gap-2 d-md-flex justify-content-md-end">' +
+                  '<button type="button" id="add-to-wishlist" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to wishlist"><span id="wishlist-icon"><i class="fa fa-heart"></i></span>' +
+                  '<div id="loader-wishlist" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '<button type="button" id="add-to-cart" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to cart"><span id="cart-icon"><i class="fa fa-shopping-cart"></span></i>' +
+                  '<div id="loader-cart" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>'
+                $('#all-product-item').append(row);
+              });
+            },
+            error: function (xhr, status, error) {
+              console.log('Something wrong on server, Please try again.');
+            },
+            complete: function () {
+              $('#load-more').show();
+              $('#loader-2').hide();
+              $('#btn-loader').hide();
+              $('#load-more-text').show();
+            }
+          });
+        }
+
+        $('#product-detail').click(function () {
+          var productId = $(this).data('id');
+          $.ajax({
+            type: 'GET',
+            url: '/redirectProductDetailPage',
+            success: function (response) {
+              var destinationUrl = 'response?id=' + productId;
+              window.location.href = destinationUrl;
+            }
+          });
+        });
+
+        function filterProduct(categoryId, currentPage) {
+          $('#loader-2').show();
+          $.ajax({
+            type: 'GET',
+            url: '/productsByCategory?categoryId=' + categoryId + '',
+            contentType: 'application/json',
+            data: {
+              page: currentPage,
+              size: pageSize
+            },
+            success: function (response) {
+              var products = response.data.content;
+              const products_list = $('#all-product-item');
+              $.each(products, function (index, product) {
+                var row =
+                  '<div id="product" class="col-md-3">' +
+                  '<div class="product-item border">' +
+                  '<div class="product-image">' +
+                  '<a href="" id="product-detail" data-id="' + product.id + '">' +
+                  '<img src="' + product.imageUrl + '" alt="Product Image">' +
+                  '</a>' +
+                  '</div>' +
+                  '<div class="product-title">' +
+                  '<a href="#"  id="product-detail" data-id="' + product.id + '">' + product.name + '</a>' +
+                  '<div class="ratting">' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="product-price">' +
+                  '<div class="row">' +
+                  '<div class="col-md-4">' +
+                  '<h3><span>&#8377;</span>' + product.price + '</h3>' +
+                  '</div>' +
+                  '<div class="col-md-8 text-end gap-2 d-md-flex justify-content-md-end">' +
+                  '<button type="button" id="add-to-wishlist" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to wishlist"><span id="wishlist-icon"><i class="fa fa-heart"></i></span>' +
+                  '<div id="loader-wishlist" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '<button type="button" id="add-to-cart" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to cart"><span id="cart-icon"><i class="fa fa-shopping-cart"></span></i>' +
+                  '<div id="loader-cart" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>'
+                $('#all-product-item').append(row);
+              });
+            },
+            error: function (xhr, status, error) {
+              console.log('Something wrong on server, Please try again.');
+            },
+            complete: function () {
+              $('#load-more').show();
+              $('#loader-2').hide();
+              $('#btn-loader').hide();
+              $('#load-more-text').show();
+            }
+          });
+        }
+        var categoryId = localStorage.getItem('categoryId');
+        if (categoryId === 'all') {
+          getAllProducts();
+        } else {
+          filterProduct(categoryId);
+        }
+
+        $('#load-more').click(function () {
+          $('#btn-loader').show();
+          $('#load-more-text').hide();
+          currentPageInitial++;
+          if (categoryId === 'all') {
+            getAllProducts(currentPageInitial);
+          } else {
+            filterProduct(categoryId, currentPageInitial);
+          }
+          $('#loader-2').hide();
+        });
+
+        // if filter all product
+        $('#dropdown-category').on('click', '#get-all', function () {
+          $('#dropdown-name').text('All');
+          getAllProducts();
+        });
+
+        // dropdown filter products by category
+        $('#dropdown-category').on('click', '#dropdown-category-filter', function () {
+          var category = $(this).data('name');
+          $('#dropdown-name').text(category);
+          // $.ajax({
+          //   type: 'GET',
+          //   url: '/productsByCategory?categoryId=' + categoryId + '',
+          //   contentType: 'application/json',
+          //   success: function (response) {
+          //     var products = response.data;
+
+          //     const products_list = $('#all-product-item');
+          //     products_list.empty();
+          //     $.each(products, function (index, product) {
+          //       var row =
+          //         '<div class="col-md-3">' +
+          //         '<div class="product-item border">' +
+          //         '<div class="product-image">' +
+          //         '<a href="" id="product-detail" data-id="' + product.id + '">' +
+          //         '<img src="' + product.imageUrl + '" alt="Product Image">' +
+          //         '</a>' +
+          //         '</div>' +
+          //         '<div class="product-title">' +
+          //         '<a href="/product/detail"  id="product-detail" data-id="' + product.id + '">' + product.name + '</a>' +
+          //         '<div class="ratting">' +
+          //         '<i class="fa fa-star"></i>' +
+          //         '<i class="fa fa-star"></i>' +
+          //         '<i class="fa fa-star"></i>' +
+          //         '<i class="fa fa-star"></i>' +
+          //         '<i class="fa fa-star"></i>' +
+          //         '</div>' +
+          //         '</div>' +
+          //         '<div class="product-price">' +
+          //         '<div class="row">' +
+          //         '<div class="col-md-4">' +
+          //         '<h3><span>&#8377;</span>' + product.price + '</h3>' +
+          //         '</div>' +
+          //         '<div class="col-md-8 text-end gap-2 d-md-flex justify-content-md-end">' +
+          //         '<button type="button" id="add-to-wishlist" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+          //         'title="Add to wishlist"><span id="wishlist-icon"><i class="fa fa-heart"></i></span>' +
+          //         '<div id="loader-wishlist" style="display: none;">' +
+          //         '<div class="d-flex justify-content-center" >' +
+          //         '<div class="spinner-border spinner-border-sm" role="status">' +
+          //         '<span class="visually-hidden">Loading...</span>' +
+          //         '</div>' +
+          //         '</div >' +
+          //         '</div > ' +
+          //         '</button>' +
+          //         '<button type="button" id="add-to-cart" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+          //         'title="Add to cart"><span id="cart-icon"><i class="fa fa-shopping-cart"></span></i>' +
+          //         '<div id="loader-cart" style="display: none;">' +
+          //         '<div class="d-flex justify-content-center" >' +
+          //         '<div class="spinner-border spinner-border-sm" role="status">' +
+          //         '<span class="visually-hidden">Loading...</span>' +
+          //         '</div>' +
+          //         '</div >' +
+          //         '</div > ' +
+          //         '</button>' +
+          //         '</div>' +
+          //         '</div>' +
+          //         '</div>'
+          //       $('#all-product-item').append(row);
+          //     });
+          //   },
+          //   error: function (xhr, status, error) {
+          //     var errors = xhr.responseJSON;
+          //     $('.toast').removeClass('bg-success');
+          //     $('.toast').addClass('bg-danger');
+          //     $('.toast').toast('show');
+          //     $('#msg').text(errors.message);
+          //   },
+          //   complete: function () {
+          //     $('#load-more').show();
+          //   }
+          // });
+        });
+
+
+        // load categories
+        $.ajax({
+          type: 'GET',
+          url: '/categories',
+          contentType: 'application/json',
+          success: function (response) {
+            var categories = response.data;
+            const dataList = $('#dropdown-category');
+            dataList.empty();
+
+            var row_const =
+              '<a id="get-all" href="#" class="dropdown-item">All</a>' +
+              '<a href="#" class="dropdown-item">Newest</a>' +
+              '<a href="#" class="dropdown-item">Popular</a>'
+            $('#dropdown-category').append(row_const);
+            $.each(categories, function (index, category) {
+              var row =
+                '<a id="dropdown-category-filter" data-name="' + category.name + '" class="dropdown-item">' + category.name + '</a>'
+              $('#dropdown-category').append(row);
+            });
+          },
+          error: function () {
+            var errors = xhr.responseJSON;
+            $('.toast').removeClass('bg-success');
+            $('.toast').addClass('bg-danger');
+            $('.toast').toast('show');
+            $('#msg').text(errors.message);
+          }
+        });
+
+      });
+
+    </script>
+  </div>
+</body>
+
+</html>

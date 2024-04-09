@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Coupon</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+    <div class="content">
+      <div class="container-fluid">
+        <div>
+          <div class="row">
+            <div>
+              <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background-color: transparent;font-size: 20px;">
+                  <li class="breadcrumb-item"><a id="dashboard-fetch-btn" href="#">Admin</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Coupon</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <button id="add-product-btn" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#couponModel"
+            type="button">Add New</button>
+        </div>
+
+        <div class="row mt-1">
+          <div class="col-md-12">
+
+            <div class="card" id="table-content">
+              <div class="card-header">
+                <div class="card-title" style="width: 100%; margin-bottom: 15px;">
+                  Coupons
+                </div>
+
+                <!-- coupon add modal -->
+                <div class="modal fade" id="couponModel" tabindex="-1" role="dialog" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+
+                    <div class="modal-content">
+                      <div class="modal-header no-bd">
+                        <p style="margin-bottom: 0; font-size: 20px;">
+                          <strong> Add New Coupon</strong>
+                        </p>
+                        <button type="button" class="close" data-dismiss="modal" id="close" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form method="post" id="coupon-form" role="form">
+                          <div class="card-body" style="padding: 0;">
+                            <div class="form-group">
+                              <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control form-control-sm" id="name"
+                                placeholder="Enter coupon name.." name="name" required>
+                              <span id="nameError" class="text-danger error"></span>
+                            </div>
+                            <div class="form-group">
+                              <label for="code" class="form-label">Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control form-control-sm" id="code"
+                                placeholder="Enter coupon code.." name="code" required>
+                              <span id="codeError" class="text-danger error"></span>
+                            </div>
+                            <div class="form-group">
+                              <label for="discount" class="form-label">Discount(%)<span
+                                  class="text-danger">*</span></label>
+                              <input type="number" class="form-control form-control-sm" id="discount"
+                                placeholder="Enter coupon discount.." name="discount" required>
+                              <span id="discountError" class="text-danger error"></span>
+                            </div>
+                            <div class="form-group">
+                              <label for="expirationDate" class="form-label">Expiration
+                                Date<span class="text-danger">*</span></label>
+                              <input type="date" class="form-control form-control-sm" id="expirationDate"
+                                placeholder="Enter coupon expiration date.." name="expirationDate" required>
+                              <span id="expirationDateError" class="text-danger error"></span>
+                            </div>
+                          </div>
+                        </form>
+
+                      </div>
+                      <div class="modal-footer no-bd">
+                        <button type="submit" class="btn btn-primary" id="add-coupon-btn">
+                          <span id="btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>
+                          Add
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sr No.</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Code</th>
+                      <th scope="col">Discount(%)</th>
+                      <th scope="col">Expiration Date</th>
+                      <th scope="col" style="width: 10%;">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="couponTableBody">
+                    <!-- Data dynamically loaded -->
+
+                  </tbody>
+                  <!-- coupon update modal -->
+                  <div class="modal fade" id="couponUpdateModel" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+
+                      <div class="modal-content">
+                        <div class="modal-header no-bd">
+                          <p style="margin-bottom: 0; font-size: 20px;">
+                            <strong> Update Coupon</strong>
+                          </p>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form method="post" id="coupon-form" role="form">
+                            <div class="card-body" style="padding: 0;">
+                              <input type="number" class="form-control form-control-sm" hidden id="idEdit" name="id"
+                                required>
+                              <div class="form-group">
+                                <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="nameEdit"
+                                  placeholder="Enter coupon name.." name="name" required>
+                                <span id="nameEditError" class="text-danger error"></span>
+                              </div>
+                              <div class="form-group">
+                                <label for="code" class="form-label">Code<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="codeEdit"
+                                  placeholder="Enter coupon code.." name="code" required>
+                                <span id="codeEditError" class="text-danger error"></span>
+                              </div>
+                              <div class="form-group">
+                                <label for="discount" class="form-label">Discount(%)<span
+                                    class="text-danger">*</span></label>
+                                <input type="number" class="form-control form-control-sm" id="discountEdit"
+                                  placeholder="Enter coupon discount.." name="discount" required>
+                                <span id="discountEditError" class="text-danger error"></span>
+                              </div>
+                              <div class="form-group">
+                                <label for="expirationDate" class="form-label">Expiration
+                                  Date<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control form-control-sm" id="expirationDateEdit"
+                                  placeholder="Enter coupon expiration date.." name="expirationDate" required>
+                                <span id="expirationDateEditError" class="text-danger error"></span>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer no-bd">
+                          <button type="submit" class="btn btn-primary" id="update-coupon-btn">
+                            <span id="btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>
+                            Update
+                          </button>
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </table>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <!-- <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-end" id="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Previous" id="prevButton">
+                    <span aria-hidden="true">&laquo;</span> Previous
+                  </a>
+                </li>
+                <li id="page-link" style="display: flex;"></li>
+                <li class="page-item">
+                  <a class="page-link" style="border-radius: 0%;" href="#" aria-label="Next" id="nextButton">Next
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+
+              </ul>
+            </nav> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        // close the notification
+        $('#toast-close').click(function () {
+          $('#toast').hide(500);
+
+        })
+
+        // Hide the toast message after 3 seconds (3000 milliseconds)
+        function hideToast() {
+          setTimeout(function () {
+            $('#toast').fadeOut();
+          }, 5000);
+
+        };
+
+        var currentPage = 0;
+        var pageSize = 5;
+        var totalPages = 1;
+
+
+        // Logic to remove validation errors when the modal dialog is closed
+        $('#couponModel').on('hidden.bs.modal', function () {
+          $('input').css('border-color', '');
+          $('.error').text('');
+          $('#coupon-form')[0].reset();
+        });
+        $('#couponUpdateModel').on('hidden.bs.modal', function () {
+          $('input').css('border-color', '');
+          $('.error').text('');
+        });
+
+        // Listen for focus event on input field
+        $('input, textarea').focus(function () {
+          $('input').css('border-color', '');
+          var errorMessage = $(this).attr('id') + 'Error';
+          $('#' + errorMessage).text('');
+        })
+
+
+        // AJAX call to fetch data
+        function fetchData(page) {
+          $('.content').hide();
+          $('#loader').show();
+          $.ajax({
+            type: 'GET',
+            url: '/admin/coupons?page=' + currentPage,
+            success: function (response) {
+              if (response.status === 'success') {
+                if (response.data == null) {
+                  alert(response.message);
+                } else {
+                  displayCoupon(response.data.content);
+                  populatePagination(response.data);
+                }
+              }
+            },
+            error: function (xhr, status, error) {
+              if (xhr.status === 'error') {
+                var errors = xhr.responseJSON;
+                alert(errors.message);
+              }
+              console.error("Error fetching user data:", error);
+            },
+            complete: function () {
+              $('.content').show();
+              $('#loader').hide();
+            }
+          });
+        };
+
+        function populatePagination(data) {
+          var pagination = $('#page-link');
+          pagination.empty();
+          totalPages = data.totalPages;
+          var pageNumber = data.pageable.pageNumber
+
+          for (var i = 0; i < totalPages; i++) {
+            var pageLink =
+              '<li class="page-item"><a class="page-link active" onclick="categoryList(' + i + ')">' + (i + 1) + '</a></li>';
+            $('#page-link').append(pageLink);
+          }
+
+        }
+        $('#nextButton').click(function () {
+          if (currentPage < totalPages) {
+            currentPage++;
+            fetchData(currentPage);
+          }
+
+        });
+
+        $('#prevButton').click(function () {
+          if (currentPage > 0) {
+            currentPage--;
+            fetchData(currentPage);
+          }
+        });
+
+
+        // function to display categories
+        function displayCoupon(coupons) {
+          const dataList = $('#couponTableBody');
+          dataList.empty();
+          $.each(coupons, function (index, coupon) {
+            var row = '<tr>' +
+              '<td>' + (index + 1) + '</td>' +
+              '<td>' + coupon.name + '</td>' +
+              '<td>' + coupon.code + '</td>' +
+              '<td>' + coupon.discount + '</td>' +
+              '<td>' + coupon.expirationDate + '</td>' +
+
+
+              '<td class="td-actions text-right">' +
+              '<div class="form-button-action">' +
+
+              '<button id="updateButton" data-target="#couponUpdateModel" data-id="' + coupon.id +
+              '" data-toggle="modal" title="Edit" class="btn btn-link btn-simple-primary">' +
+              '<i class="la la-edit"></i>' +
+              '</button>' +
+
+              '<button id="deleteButton" type="button" data-id="' + coupon.id + '" data-toggle="tooltip" title="Remove" class="btn btn-link btn-simple-danger">' +
+              '<i class="la la-times"></i>' +
+              '</button>' +
+
+              '</div>' +
+              '</td>' +
+              '</tr>'
+            $('#couponTableBody').append(row);
+
+          });
+        }
+        fetchData(currentPage);
+
+        // Click event handler for add coupon button
+        $('#add-coupon-btn').click(function () {
+          var name = $('#name').val().trim();
+          var code = $('#code').val().trim();
+          var discount = $('#discount').val();
+          var expirationDate = $('#expirationDate').val();
+          var formData = {
+            name: name,
+            code: code,
+            discount: discount,
+            expirationDate: expirationDate
+          }
+
+          var valid = true;
+          if (name === '') {
+            $('#nameError').text('*Please enter coupon name.');
+            $('#name').css('border-color', 'red');
+            valid = false;
+          } else if (code === '') {
+            $('#codeError').text('*Please enter coupon code.');
+            $('#code').css('border-color', 'red');
+            valid = false;
+          } else if (discount === '') {
+            $('#discountError').text('*Please enter coupon discount.');
+            $('#discount').css('border-color', 'red');
+            valid = false;
+          } else if (expirationDate === '') {
+            $('#expirationDateError').text('*Please enter coupon expirationDate.');
+            $('#expirationDate').css('border-color', 'red');
+            valid = false;
+          }
+          if (valid === true) {
+            $('#btn-loader').show();
+            $.ajax({
+              type: 'POST',
+              url: '/admin/coupon/add',
+              data: JSON.stringify(formData),
+              contentType: 'application/json',
+              success: function (response) {
+                $('.toast').removeClass("bg-danger border-danger");
+                $('#msg').text(response.message);
+                $('.toast').addClass("bg-success border-success");
+                $('#toast').show();
+                $('#coupon-form')[0].reset();
+                $('#couponModel').modal('hide');
+
+                const dataList = $('#couponTableBody');
+                dataList.empty();
+                fetchData(currentPage);
+                hideToast()
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                if (xhr.status === 409) {
+                  $('#codeError').text(errors.message);
+                }
+                if (xhr.status === 404) {
+                  $('.toast').removeClass("bg-success border-success");
+                  $('#msg').text(errors.message);
+                  $('.toast').addClass("bg-success border-success");
+                  $('#toast').show();
+                }
+
+              },
+              complete: function () {
+                $('#btn-loader').hide();
+                hideToast();
+              }
+            });
+          }
+
+        });
+        // Click event handler for update button
+        $('#couponTableBody').on('click', "#updateButton", function () {
+          var couponId = $(this).data('id');
+          $.ajax({
+            type: 'GET',
+            url: '/admin/coupon/get/' + couponId,
+            contentType: 'application/json',
+            success: function (response) {
+              var responseData = response.data;
+              $('#idEdit').val(responseData.id);
+              $('#nameEdit').val(responseData.name);
+              $('#codeEdit').val(responseData.code);
+              $('#discountEdit').val(responseData.discount);
+              $('#expirationDateEdit').val(responseData.expirationDate);
+            }
+          })
+        })
+
+        // Click event handler for update coupon button
+        $('#update-coupon-btn').click(function (event) {
+          event.preventDefault();
+          var id = $('#idEdit').val();
+          var name = $('#nameEdit').val().trim();
+          var code = $('#codeEdit').val().trim();
+          var discount = $('#discountEdit').val();
+          var expirationDate = $('#expirationDateEdit').val();
+          var formData = {
+            name: name,
+            code: code,
+            discount: discount,
+            expirationDate: expirationDate
+          };
+          var valid = true;
+          if (name === '') {
+            $('#nameEditError').text('*Please enter coupon name.');
+            $('#nameEdit').css('border-color', 'red');
+            valid = false;
+          } else if (code === '') {
+            $('#codeEditError').text('*Please enter coupon code.');
+            $('#codeEdit').css('border-color', 'red');
+            valid = false;
+          } else if (discount === '') {
+            $('#discountEditError').text('*Please enter coupon discount.');
+            $('#discountEdit').css('border-color', 'red');
+            valid = false;
+          } else if (expirationDate === '') {
+            $('#expirationEditDateError').text('*Please enter coupon expirationDate.');
+            $('#expirationDate').css('border-color', 'red');
+            valid = false;
+          }
+          var loader = $(this).closest("#couponUpdateModel").find("#btn-loader");
+          if (valid) {
+            loader.show();
+            $.ajax({
+              type: 'PUT',
+              url: '/admin/coupon/update/' + id,
+              data: JSON.stringify(formData),
+              contentType: 'application/json',
+              success: function (response) {
+                $('.toast').removeClass("bg-danger border-danger");
+                $('#msg').text(response.message);
+                $('.toast').addClass("bg-success border-success");
+                $('#toast').show();
+                $('#couponUpdateModel').modal('hide');
+                const dataList = $('#couponTableBody');
+                dataList.empty();
+                fetchData(currentPage);
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                if (xhr.status === 409) {
+                  $('#codeEditError').text(errors.message);
+                }
+                $('.toast').removeClass("bg-success border-success");
+                $('#msg').text(errors.message);
+                $('.toast').addClass("bg-danger border-danger");
+                $('#toast').show();
+                $('#couponUpdateModel').modal('hide');
+
+              },
+              complete: function () {
+                hideToast();
+                loader.hide();
+              }
+            });
+          }
+
+        });
+
+        // Click event handler for delete button
+        $('#couponTableBody').on('click', '#deleteButton', function () {
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              var couponId = $(this).data('id');
+              $.ajax({
+                type: 'DELETE',
+                url: "/admin/coupon/delete/" + couponId,
+                contentType: 'application/json',
+                success: function (response) {
+                  Swal.fire({
+                    title: "Deleted!",
+                    text: response.message,
+                    icon: "success"
+                  });
+                },
+                error: function (xhr, status, error) {
+                  var error = xhr.responseJSON;
+                  Swal.fire({
+                    title: "Error!",
+                    text: error.message,
+                    icon: "error"
+                  });
+                },
+                complete: function () {
+                  fetchData(currentPage);
+                }
+              });
+
+            }
+          });
+        });
+
+
+      });
+
+    </script>
+  </div>
+</body>
+
+</html>

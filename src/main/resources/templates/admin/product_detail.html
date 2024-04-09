@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+    <title>Product Detail</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="content">
+            <div class="container-fluid">
+                <div>
+                    <div class="row">
+                        <div>
+                            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb" style="background-color: transparent;font-size: 20px;">
+                                    <li class="breadcrumb-item"><a id="dashboard-fetch-btn" href="#">Admin</a></li>
+                                    <li class="breadcrumb-item"><a id="dashboard-fetch-btn" href="#">Product</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-4 d-md-flex justify-content-md-start">
+                    <a href="/admin/product"><button class="btn btn-primary btn-xs" type="button">Back</button></a>
+                </div>
+
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+
+                                <div class="card-title" style="margin-bottom: 15px;">
+                                    Product Details
+                                </div>
+
+
+                            </div>
+
+                            <div class="container">
+                                <div class="row p-3">
+                                    <div class="col-md-4 border rounded">
+                                        <div class="p-3">
+                                            <img id="image" width="100%" height="100%"
+                                                src="/img/61PC385vDWL._SY741_.jpg" style="object-fit: contain;">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h4 id="name"></h4>
+                                        <hr>
+                                        <h4>Product details</h4>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h6>Price: </h6>
+                                                <h6>Color: </h6>
+                                                <h6>Code: </h6>
+                                                <h6>Category: </h6>
+                                                <h6>Date First Available: </h6>
+                                                <h6>Last Updated: </h6>
+                                                <h6>Manufacturer: </h6>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <h6>&#8377;<span id="price"></span></h6>
+                                                <h6 id="color"></h6>
+                                                <h6 id="code"></h6>
+                                                <h6 id="categoryName"></h6>
+                                                <h6 id="createdAt"></h6>
+                                                <h6 id="updatedAt"></h6>
+                                                <h6 id="manufacturer"></h6>
+                                            </div>
+
+                                        </div>
+                                        <hr>
+                                        <h4>Product Description</h4>
+                                        <p id="description"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                // close the notification
+                $('#toast-close').click(function () {
+                    $('#toast').hide(500);
+
+                })
+
+                // Hide the toast message after 3 seconds (3000 milliseconds)
+                function hideToast() {
+                    setTimeout(function () {
+                        $('#toast').fadeOut();
+                    }, 5000);
+
+                };
+
+
+                // Get data-id from local storage
+                var productId = localStorage.getItem('product-id');
+                $('.content').hide();
+                $('#loader').show();
+                $.ajax({
+                    type: 'GET',
+                    url: '/admin/product/' + productId,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        var productData = response.data;
+                        $('#category').val(productData.categoryId);
+                        $('#categoryName').text(productData.category.name);
+                        $('#name').text(productData.name);
+                        $('#code').text(productData.code);
+                        $('#price').text(productData.price);
+                        $('#color').text(productData.color);
+                        $('#createdAt').text(productData.createdAt);
+                        if (productData.updatedAt === null) {
+                            $('#updatedAt').text('No updated');
+                        } else {
+                            $('#updatedAt').text(productData.updatedAt);
+                        }
+                        $('#manufacturer').text(productData.manufacturer);
+                        $('#description').text(productData.description);
+                        $('#image').attr('src', productData.imageUrl);
+                        $('#file').val(productData.imageUrl);
+
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON;
+                        alert(errorMessage.message);
+                    },
+                    complete: function () {
+                        $('.content').show();
+                        $('#loader').hide();
+                    }
+                });
+
+
+
+                // back button
+                $('#back').click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/admin/product',
+                        success: function (response) {
+                            $('#content').html(response);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseJSON);
+                        }
+                    });
+                });
+
+            });
+        </script>
+    </div>
+</body>
+
+</html>

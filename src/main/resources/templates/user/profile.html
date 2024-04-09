@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Profile</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+
+    <!-- Login Start -->
+    <div class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6" style="margin: auto;">
+            <div class="mb-2" style="text-align:end;">
+              <!-- <button data-toggle="modal" data-target="#passwordChangeModel" class="btn btn-primary small">Change
+                Password
+              </button> -->
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#passwordChangeModel">
+                Change Password
+              </button>
+
+              <!-- Modal dialog container change password start-->
+              <div class="modal fade" id="passwordChangeModel" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form id="password-change-form" role="form">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Password Change</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="mb-3">
+                          <label class="small mb-1" for="email">Current
+                            Password<span class="text-danger">*</span></label>
+
+                          <div class="input-group" id="show_hide_password">
+                            <input style="border-radius: 4px;" class="form-control small" type="password"
+                              placeholder="Enter your current password.." id="currentPassword" name="currentPassword">
+                            <div class="input-group-addon">
+                              <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                            </div>
+                          </div>
+
+                          <p id="currentPasswordError" style="font-size: smaller;" class="text-danger small error"></p>
+                        </div>
+                        <div class="mb-3">
+                          <label class="small mb-1" for="email">New
+                            Password<span class="text-danger">*</span></label>
+                          <input class="form-control small" type="password" placeholder="Enter new password.."
+                            id="newPassword" name="newPassword">
+                          <p id="newPasswordError" style="font-size: smaller;" class="text-danger small error">
+                          </p>
+                        </div>
+                        <div class="mb-3">
+                          <label class="small mb-1" for="phone">Confirm
+                            Password<span class="text-danger">*</span></label>
+                          <input class="form-control small" type="password" placeholder="Enter confirm password.."
+                            name="confirmPassword" id="confirmPassword">
+                          <p id="confirmPasswordError" style="font-size: smaller;" class="text-danger small error"></p>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="model-btn" data-dismiss="modal">Close</button>
+                        <button type="submit" class="model-btn">
+                          <span id="model-btn-loader" style="display: none;"><i
+                              class="fa fa-spinner fa-pulse"></i></span>
+                          Save
+                          changes
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal dialog container change password end-->
+
+
+              <button class="btn btn-primary small">
+                <a style="color: ghostwhite;" th:href="@{/logout}"><i class="fa fa-sign-out-alt"></i>
+                  Logout</a>
+              </button>
+            </div>
+
+            <div class="login-form">
+
+              <form id="user-details-update-form" role="form" enctype="multipart/form-data">
+                <div class="row">
+
+                  <div class="col-12 col-sm-auto mb-1 row">
+                    <!--Avatar-->
+                    <div class="col-md-5">
+                      <div class="d-flex justify-content-center mb-2">
+                        <div class="profile-img">
+                          <img id="selectedAvatar" src="/img/user-default.png" class="rounded-squire"
+                            style="width: 100%; height: 100%; object-fit: cover;" alt="example placeholder" />
+                        </div>
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <div class="btn">
+                          <label class="form-label mb-auto" for="customFile2"><i class="fa fa-fw fa-camera"></i>Upload
+                          </label>
+                          <input type="file" class="form-control d-none" id="customFile2"
+                            onchange="displaySelectedImage(event, 'selectedAvatar')" />
+                        </div>
+                        <button id="remove-image" class="btn btn-primary mx-1" type="button">
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                      <p id="fileError" style="font-size: smaller;" class="text-danger small">
+                      </p>
+                    </div>
+
+                    <div class="col-md-7">
+                      <div class="col d-flex flex-column justify-content-between mb-2">
+                        <div class="text-center text-sm-right">
+                          <span class="badge badge-secondary">user administrator</span>
+                          <div class="text-muted"><small>Joined <span id="date"></span> Dec
+                              2017</small></div>
+
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <!-- User details update form -->
+
+                <!-- Form Row-->
+                <div class="row gx-3 ">
+                  <!-- Form Group (first name)-->
+                  <div class="col-md-6">
+                    <label class="small mb-1" for="firstname">First name</label>
+                    <input class="form-control small" type="text" placeholder="Enter first name.." name="firstname"
+                      id="firstname">
+                    <p id="firstnameError" style="font-size: smaller;" class="text-danger small">
+                    </p>
+                  </div>
+                  <!-- Form Group (last name)-->
+                  <div class="col-md-6">
+                    <label class="small mb-1" for="lastname">Last name</label>
+                    <input class="form-control small" type="text" id="lastname" placeholder="Enter last name.."
+                      name="lastname">
+                    <p id="lastnameError" style="font-size: smaller;" class="text-danger small"></p>
+                  </div>
+                </div>
+                <!-- Form Group (username)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="email">Email ID</label>
+                  <input class="form-control small" type="text" placeholder="Enter your email.." id="email"
+                    name="email">
+                  <p id="emailError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+                <!-- Form Group (phome number)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="phone">Phone number</label>
+                  <input class="form-control small" type="number" placeholder="Enter phone no.." name="phone"
+                    id="phone">
+                  <p id="phoneError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+
+                <!-- Save changes button-->
+                <button id="user-details-update-btn" class="btn btn-primary small" type="submit">
+                  <span id="btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span> Save
+                  Changes
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      function displaySelectedImage(event, elementId) {
+        const selectedImage = document.getElementById(elementId);
+        const fileInput = event.target;
+
+        var image = document.getElementById('customFile2').files[0];
+        var filename = image.name;
+        var fileExtension = filename.split('.').pop().toLowerCase();
+        if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') {
+          $('#fileError').text('*Only PNG, JPEG, or JPG files are allowed.');
+          return;
+        }
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            selectedImage.src = e.target.result;
+          };
+
+          reader.readAsDataURL(fileInput.files[0]);
+        }
+      }
+      $('#remove-image').click(function (event) {
+        event.preventDefault();
+        $('#selectedAvatar').prop('src', '/img/user-default.png');
+
+      });
+
+      $(document).ready(function () {
+
+        // get current user details
+        function fetchCurrentUser() {
+          $('#loader').show();
+          $('#content').css('opacity', 0.5);
+          $.ajax({
+            type: 'GET',
+            url: '/getCurrentUser',
+            contentType: 'application/json',
+            success: function (response) {
+              var user = response.data;
+              var image = user.imageUrl;
+              $('#firstname').val(user.firstname);
+              $('#lastname').val(user.lastname);
+              $('#email').val(user.email);
+              $('#phone').val(user.phone);
+              if (image === null) {
+                $('#selectedAvatar').prop('src', '/img/user-default.png');
+              } else {
+                $('#selectedAvatar').prop('src', image);
+                // $('#customFile2').files[0].val(user.imageName);
+              }
+              $('#date').text(user.dateTime);
+            },
+            error: function (xhr, status, error) {
+              var errors = xhr.responseJSON;
+              $('.toast').removeClass('bg-success');
+              $('.toast').addClass('bg-danger');
+              $('.toast').toast('show');
+              $('#msg').text(errors.message);
+            },
+            complete: function () {
+              $('#loader').hide();
+              $('#content').css('opacity', 1.0);
+            }
+          });
+        }
+        fetchCurrentUser();
+
+        $('#firstname').focus(function () {
+          $('#firstnameError').text('');
+        })
+        $('#lastname').focus(function () {
+          $('#lastnameError').text('');
+        })
+        $('#email').focus(function () {
+          $('#emailError').text('');
+        })
+        $('#phone').focus(function () {
+          $('#phoneError').text('');
+        })
+
+        $('#user-details-update-form').submit(function (event) {
+          event.preventDefault();
+
+          var image = document.getElementById('customFile2').files[0];
+
+          var firstname = $('#firstname').val().trim();
+          var lastname = $('#lastname').val().trim();
+          var email = $('#email').val().trim();
+          var phone = $('#phone').val().trim();
+
+          var formData = new FormData();
+          formData.append('firstname', firstname);
+          formData.append('lastname', lastname);
+          formData.append('email', email);
+          formData.append('phone', phone);
+          formData.append('image', image);
+
+          if (firstname === '') {
+            $('#firstnameError').text('*Please enter your first name.');
+          } else if (email === '') {
+            $('#emailError').text('*Please enter your email.');
+          } else if (phone === '') {
+            $('#phoneError').text('*Please confirm your phone number.');
+          } else {
+            $('#btn-loader').show();
+            $.ajax({
+              type: 'POST',
+              url: '/profile/update',
+              contentType: false,
+              processData: false,
+              data: formData,
+              success: function (response) {
+
+                $('.toast').removeClass('bg-danger');
+                $('.toast').addClass('bg-success');
+                $('.toast').toast('show');
+                $('#msg').text(response.message);
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+
+                $('.toast').removeClass('bg-success');
+                $('.toast').addClass('bg-danger');
+                $('.toast').toast('show');
+                $('#msg').text(errors.message);
+              },
+              complete: function () {
+                $('#btn-loader').hide();
+                fetchCurrentUser();
+              }
+            });
+          }
+        });
+
+
+        // clear modal field error if focus on field
+        $('#currentPassword').focus(function () {
+          $('#currentPasswordError').text('');
+        });
+        $('#newPassword').focus(function () {
+          $('#newPasswordError').text('');
+        });
+        $('#confirmPassword').focus(function () {
+          $('#confirmPasswordError').text('');
+        });
+
+        // Remove validation errors when the modal dialog is closed
+        $('#passwordChangeModel').on('hidden.bs.modal', function () {
+          $('.error').text('');
+          $('#myForm')[0].reset();
+        });
+        // event hadler for password change
+        $(document).on('submit', '#password-change-form', function (event) {
+          event.preventDefault();
+          var currentPassword = $('#currentPassword').val().trim();
+          var newPassword = $('#newPassword').val().trim();
+          var confirmPassword = $('#confirmPassword').val().trim();
+
+          if (currentPassword === '') {
+            $('#currentPasswordError').text('*Please enter your current password.');
+          } else if (newPassword === '') {
+            $('#newPasswordError').text('*Please enter your new password.');
+          } else if (confirmPassword === '') {
+            $('#confirmPasswordError').text('*Please confirm your new password.');
+          } else if (!(newPassword === confirmPassword)) {
+            $('#confirmPasswordError').text('*Password do not match.');
+          } else {
+            $('#model-btn-loader').show();
+            $.ajax({
+              type: 'POST',
+              url: '/profile/changePassword ',
+              data: {
+                oldPassword: currentPassword,
+                newPassword: newPassword
+              },
+              success: function (response) {
+                $('#passwordChangeModel').modal('hide');
+                $('.toast').removeClass('bg-danger');
+                $('.toast').addClass('bg-success');
+                $('.toast').toast('show');
+                $('#msg').text(response.message);
+                $('#password-change-form')[0].reset();
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                if (xhr.status === 400) {
+                  $('#currentPasswordError').text(errors.message)
+                } else {
+                  $('.toast').removeClass('bg-success');
+                  $('.toast').addClass('bg-danger');
+                  $('.toast').toast('show');
+                  $('#msg').text(errors.message);
+                  $('#password-change-form')[0].reset();
+                }
+              },
+              complete: function () {
+                $('#passwordChangeModel').modal('hide');
+
+                $('#model-btn-loader').hide();
+              }
+            });
+          }
+        });
+      });
+
+      $("#show_hide_password a").on('click', function (event) {
+        event.preventDefault();
+        if ($('#show_hide_password input').attr("type") == "text") {
+          $('#show_hide_password input').attr('type', 'password');
+          $('#show_hide_password i').addClass("fa-eye-slash");
+          $('#show_hide_password i').removeClass("fa-eye");
+        } else if ($('#show_hide_password input').attr("type") == "password") {
+          $('#show_hide_password input').attr('type', 'text');
+          $('#show_hide_password i').removeClass("fa-eye-slash");
+          $('#show_hide_password i').addClass("fa-eye");
+        }
+      });
+    </script>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>My Orders</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+    <!-- Order Start -->
+    <div class="order-page">
+      <div class="container-fluid">
+        <div class="row">
+          <div id="loader-2">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div id="orders">
+
+          </div>
+        </div>
+        <!-- if wishlist is empty -->
+        <div id="emptyOrder" class="card-body cart mb-5" style="display: none;">
+          <div class="col-md-12 empty-cart-cls text-center m-auto" style="border-radius: 4px;
+              border: 1px solid #dddddd;
+              background-color: #ffffff;
+              padding: 60px 0px;">
+            <img src="/img/emptyOrders.png" width="250" height="250" class="img-fluid mb-4 mr-3">
+            <h2>You have no orders</h2>
+            <a href="/product" class="btn btn-primary cart-btn-transform m-3" data-abc="true"
+              style="padding: 8px 10px;">Start
+              Shopping</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Order End -->
+
+    <script>
+      $(document).ready(function () {
+        function showOrders() {
+          $.ajax({
+            type: 'GET',
+            url: '/order/getAllPlacedOrders',
+            contentType: 'application/json',
+            success: function (response) {
+              var orderData = response.data;
+              var totalOrder = response.totalOrders;
+              if (Object.keys(orderData).length === 0) {
+                $('#emptyOrder').show();
+              }
+              var orderHTML = $('#orders');
+              orderHTML.empty();
+              $.each(orderData, function (index, order) {
+                var dateTimeString = order.createdAt;
+                var formattedDateTime = moment(dateTimeString).format('Do,MMMM YYYY, hh:mm:ss');
+                var date = new Date(dateTimeString);
+                var dayOfWeek = date.getDay();
+                var weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                var weekdayName = weekdayNames[dayOfWeek];
+
+                var content = '<div class="inner col-md-10">' +
+                  '<div class="header">' +
+                  '<div class="action">' +
+                  '<h5>ORDER ID: ' + order.trackingId.toUpperCase() + '</h5>' +
+                  '<div>' +
+                  '<button style="margin-right: 5px">Need Help</button>' +
+                  '<a id="track-order" data-id="' + order.trackingId + '" href="#"><button>Track Order</button></a>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="body">' +
+                  '<p>Order Placed On: ' + weekdayName + ' ' + formattedDateTime + '</p>' +
+                  '<div class="d-flex justify-content-between">' +
+                  '<p>Order Status: ' + order.orderStatus + '</p>' +
+                  '<p>Order Total: &#8377;' + order.amount + '</p>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>'
+
+                orderHTML.append(content);
+              });
+            },
+            complete: function () {
+              $('#loader-2').hide();
+            }
+          });
+        }
+        showOrders();
+
+        $(document).on('click', '#track-order', function () {
+          var trackingId = $(this).data('id');
+          localStorage.setItem('trackingId', trackingId);
+          $.ajax({
+            type: 'GET',
+            url: '/redirectOrderTrackPage',
+            success: function (response) {
+              window.location.href = response;
+            }
+          });
+        });
+      });
+    </script>
+  </div>
+</body>
+
+</html>

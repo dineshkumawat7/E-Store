@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+    <title>Payment</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+
+
+        <!-- Payment Start -->
+        <div class="checkout">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-6">
+                        <div class="checkout-inner">
+
+                            <div class="cart-product">
+                                <h4>
+                                    <bold>Your Items <span id="totalcartItemInsummary"></span></bold>
+                                </h4>
+                                <div id="cartItemList">
+                                    <!-- cart item dynamically load -->
+                                </div>
+
+                                <!-- <div class="content">
+
+                                    <div class="product-img">
+                                        <img width="100%" height="100%" src="\img\category-3.jpg">
+                                    </div>
+                                    <div class="product-detail">
+                                        <div class="product-name">
+                                            <h6>BUMMY PANTS Super Dry Leakage Proof Technolo Leakage Proof Technolo</h6>
+                                        </div>
+                                        <div class="product-price">
+                                            <p>Price: &#8377;<span>635</span></p>
+                                        </div>
+                                        <div class="product-quantity">
+                                            <p>Quantity: <span>3</span></p>
+                                        </div>
+                                        <div class="product-quantity">
+                                            <p><span>Free Delivery</span></p>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+
+                            <div class="cart-address">
+                                <h4>
+                                    <bold>Delivery Address</bold>
+                                </h4>
+                                <div class="content" id="addressInSummary">
+                                    <!-- <div>
+                                        <h6><span>Dinesh Kumawat</span></h6>
+                                        <p><span>20, Kanta Chouraya,
+                                                Jotwara</span>, <span>Jaipur</span><span>-303603</span></p>
+                                        <p><span>Rajasthan</span>, India<span></span></p>
+                                        <p><span>dinesh7627000907@gmail.com</span></p>
+                                        <h6><span>7627000907</span></h6>
+                                    </div> -->
+                                </div>
+                            </div>
+
+                            <div class="cart-payment">
+                                <h4>
+                                    <bold>Payment Mode</bold>
+                                </h4>
+                                <div class="content">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="d-flex justify-content-between">
+                                                <p>
+                                                    <bold id="paymentMethod"></bold>
+                                                </p>
+                                                <div>
+                                                    <a href="/payment"><button>Edit</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="checkout-inner">
+                            <div class="checkout-summary">
+                                <h1>Cart Total</h1>
+                                <p>Total Product Price<span>+ &#8377;<span id="amount"></span></p>
+                                <p class="sub-total">Total Discount<span>- &#8377;<span id="discount"></span></p>
+                                <p class="ship-cost">Shipping Cost<span>- &#8377;<span id="shippingCost">0</span></p>
+                                <h2>Grand Total<span>&#8377;<span id="grandTotal"></span></h2>
+                            </div>
+                            <button style="width: 100%; height: 50px;" class="btn" type="submit" id="place-order-btn">
+                                <span id="btn-loader" style="padding: 0 35px; display: none;"><i
+                                        class="fa fa-spinner fa-pulse"></i></span>
+                                <span id="btn-text"> Place Order</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Payment end -->
+        <script src="/js/cart.js"></script>
+        <script>
+            $(document).ready(function () {
+
+                function loadCartItemsInSummary() {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/order/getOrderByUser',
+                        contentType: 'application/json',
+                        success: function (response) {
+                            var orderData = response.data;
+                            var cartItems = orderData.cartItems;
+                            var cartItemList = $('#cartItemList');
+                            cartItemList.empty();
+                            $.each(cartItems, function (index, cartItem) {
+                                var content = '<div class="content">' +
+                                    '<div class="product-img">' +
+                                    '<img width="100%" height="100%" src="' + cartItem.productImage + '">' +
+                                    '</div>' +
+                                    '<div class="product-detail">' +
+                                    '<div class="product-name">' +
+                                    '<h6>' + cartItem.productName + '</h6>' +
+                                    '</div>' +
+                                    '<div class="product-price">' +
+                                    '<p>Price: &#8377;<span>' + cartItem.price + '</span></p>' +
+                                    '</div>' +
+                                    '<div class="product-quantity">' +
+                                    '<p>Quantity: <span>' + cartItem.quantity + '</span></p>' +
+                                    '</div>' +
+                                    '<div class="product-quantity">' +
+                                    '<p><span>Free Delivery</span></p>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div > '
+                                cartItemList.append(content);
+                            });
+
+                            var address = orderData.orderAddressDto;
+                            var addressSection = $('#addressInSummary');
+                            addressSection.empty();
+                            var addressContent = '<div>' +
+                                '<h6><span>' + address.fullname + '</span></h6>' +
+                                '<p><span>' + address.street + '</span>, <span>' + address.city + '</span><span>-' + address.pincode + '</span></p>' +
+                                '<p><span>' + address.state + '</span>, ' + address.country + '<span></span></p>' +
+                                '<p><span>' + address.email + '</span></p>' +
+                                '<h6><span>' + address.phone + '</span></h6>' +
+                                '</div>'
+                            addressSection.append(addressContent);
+
+                            $('#paymentMethod').text(orderData.payment);
+                        },
+                        error(xhr) {
+
+                        }
+                    });
+                }
+                loadCartItemsInSummary();
+                $('#place-order-btn').click(function (event) {
+                    event.preventDefault();
+                    $('#btn-loader').show();
+                    $('#btn-text').hide();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/order/placedOrder',
+                        data: {
+                            orderId: 3
+                        },
+                        success: function (response) {
+                            $('.toast').removeClass('bg-danger');
+                            $('.toast').addClass('bg-success');
+                            $('.toast').toast('show');
+                            $('#msg').text(response.message);
+                        },
+                        error: function (xhr) {
+                            var errors = xhr.responseJSON;
+                            $('.toast').removeClass('bg-success');
+                            $('.toast').addClass('bg-danger');
+                            $('.toast').toast('show');
+                            $('#msg').text(errors.message);
+                        },
+                        complete: function () {
+                            $('#btn-loader').hide();
+                            $('#btn-text').show();
+                        }
+                    })
+                });
+            });
+        </script>
+    </div>
+
+</body>
+
+</html>

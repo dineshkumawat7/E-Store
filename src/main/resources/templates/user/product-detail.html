@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Product Detail</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+    <!-- Product Detail Start -->
+    <div class="product-detail">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-9">
+            <div id="productDetail">
+              <!-- product detail dynamically load -->
+            </div>
+            <div class="row product-detail-bottom">
+              <div class="col-lg-12">
+                <ul class="nav nav-pills nav-justified">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-toggle="pill" href="#description">About this item</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#specification">Specification</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#reviews">Reviews (1)</a>
+                  </li>
+                </ul>
+
+                <div class="tab-content">
+                  <div id="description" class="container tab-pane active">
+                    <h4>Product description</h4>
+                    <p>
+
+                    </p>
+                  </div>
+                  <div id="specification" class="container tab-pane fade">
+                    <h4>Product specification</h4>
+                    <ul>
+                      <li>Lorem ipsum dolor sit amet</li>
+                      <li>Lorem ipsum dolor sit amet</li>
+                      <li>Lorem ipsum dolor sit amet</li>
+                      <li>Lorem ipsum dolor sit amet</li>
+                      <li>Lorem ipsum dolor sit amet</li>
+                    </ul>
+                  </div>
+                  <div id="reviews" class="container tab-pane fade">
+                    <div class="reviews-submitted">
+                      <div class="reviewer">Phasellus Gravida - <span>01 Jan 2020</span></div>
+                      <div class="ratting">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                      </div>
+                      <p>
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                        accusantium
+                        doloremque laudantium, totam rem aperiam.
+                      </p>
+                    </div>
+                    <div class="reviews-submit">
+                      <h4>Give your Review:</h4>
+                      <div class="ratting">
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                      </div>
+                      <div class="row form">
+                        <div class="col-sm-6">
+                          <input type="text" placeholder="Name">
+                        </div>
+                        <div class="col-sm-6">
+                          <input type="email" placeholder="Email">
+                        </div>
+                        <div class="col-sm-12">
+                          <textarea placeholder="Review"></textarea>
+                        </div>
+                        <div class="col-sm-12">
+                          <button>Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- Side Bar Start -->
+          <div class="col-lg-3 sidebar">
+            <div class="sidebar-widget widget-slider">
+              <div class="sidebar-slider normal-slider">
+
+
+
+                <!-- <div class="product-item">
+                  <div class="product-title">
+                    <a href="#">Product Name</a>
+                    <div class="ratting">
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                  </div>
+                  <div class="product-image">
+                    <a href="product-detail.html">
+                      <img src="/img/p-1.jpg" alt="Product Image">
+                    </a>
+                    <div class="product-action">
+                      <a href="#"><i class="fa fa-cart-plus"></i></a>
+                      <a href="#"><i class="fa fa-heart"></i></a>
+                      <a href="#"><i class="fa fa-search"></i></a>
+                    </div>
+                  </div>
+                  <div class="product-price">
+                    <h3><span>$</span>99</h3>
+                    <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+
+          </div>
+          <!-- Side Bar End -->
+
+        </div>
+
+
+        <!-- <div class="releted-product">
+
+
+        </div> -->
+        <h3 style="text-align: center; margin-top: 20px;">Similar Products</h3>
+        <div id="loader-2">
+          <div class="d-flex justify-content-center" style="padding-top: 25px;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="row">
+          <div class="col-lg-12">
+
+            <div class="row" id="similar-item">
+              <!-- product data dynamically load -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- Product Detail End -->
+    <script>
+      $(document).ready(function () {
+
+        // load product details
+        var productId = localStorage.getItem('product-id');
+        $.ajax({
+          type: 'GET',
+          url: '/product/' + productId,
+          contentType: 'application/json',
+          success: function (response) {
+            var productData = response.data;
+
+            var dateTimeString = productData.createdAt;
+            var formattedDateTime = moment(dateTimeString).format('Do,MMMM YYYY, hh:mm:ss');
+
+            $('#date').text(formattedDateTime);
+            $('#description').text(productData.description);
+
+
+
+
+            var productDetailHTML = '<div class="product-container">' +
+              '<div class="product-image"><img src="' + productData.imageUrl + '"/></div>' +
+              '<div class="detail">' +
+              '<h4>' + productData.name + '</h4>' +
+              '<div class="ratting">' +
+              '<i class="fa fa-star"></i>' +
+              '<i class="fa fa-star"></i>' +
+              '<i class="fa fa-star"></i>' +
+              '<i class="fa fa-star"></i>' +
+              '<i class="fa fa-star"></i>' +
+              '</div>' +
+              '<hr>' +
+              '<h5>Product Inforamation</h5>' +
+              '<div class="price"><h6>Price:</h6><p>&#8377;<span>' + productData.price + '</span></p></div>' +
+              '<div class="color"><h6>Color:</h6><p>' + productData.color + '</p></div>' +
+              '<div class="p-category"><h6>Category Type:</h6><p>' + productData.category.name + '</p></div>' +
+              '<div class="code"><h6>Code:</h6><p><span>' + productData.code.toUpperCase() + '</span></p></div>' +
+              '<div class="date"><h6>Date First Available:</h6><p>' + productData.createdAt + '</p></div>' +
+              '<div class="manufactrure"><h6>Manufactrure:</h6><p>' + productData.manufacturer + '</p></div>' +
+              '<div class="action">' +
+              '<button id="add-to-cart" data-id="' + productData.id + '" style="margin-right: 10px;">' +
+              '<div id="loader-cart" style="display:none;">' +
+              '<div class="d-flex justify-content-center" >' +
+              '<div class="spinner-border spinner-border-sm" role="status">' +
+              '<span class="visually-hidden">Loading...</span>' +
+              '</div>' +
+              '</div >' +
+              '</div >' +
+              '<i class="fa fa-shopping-cart"></i>Add to Cart</button > ' +
+              '<button id="add-to-wishlist" data-id="' + productData.id + '">' +
+              '<div id="loader-wishlist" style="display:none;">' +
+              '<div class="d-flex justify-content-center" >' +
+              '<div class="spinner-border spinner-border-sm" role="status">' +
+              '<span class="visually-hidden">Loading...</span>' +
+              '</div>' +
+              '</div >' +
+              '</div >' +
+              '<i class="fa fa-heart"></i> Add to Wishlist</button>' +
+              '</div>' +
+              '</div>' +
+              '</div>'
+            $('#productDetail').append(productDetailHTML);
+          },
+          errror: function (xhr, status, error) {
+            var errors = xhr.responseJSON;
+            $('.toast').removeClass('bg-success');
+            $('.toast').addClass('bg-danger');
+            $('.toast').toast('show');
+            $('#msg').text(errors.message);
+          }
+        });
+
+        var currentPage = 0;
+        var pageSize = 10;
+
+        // home page featured slick slider product dynamic load
+        function loadSlickSlider() {
+          $.ajax({
+            type: 'GET',
+            url: '/products',
+            data: {
+              page: currentPage,
+              size: pageSize
+            },
+            contentType: 'application/json',
+            success: function (response) {
+              var products = response.data.content;
+
+              $('.sidebar-slider').slick('removeSlide', 0);
+              $.each(products, function (index, product) {
+                $('.sidebar-slider').slick('slickAdd', '<div class="col-lg-3">' +
+                  '<div class="product-item" style="border: none;">' +
+                  '<div class="product-image" style="padding: 7px;">' +
+                  '<a href="#" id="product-detail" data-id="' + product.id + '">' +
+                  '<img src="' + product.imageUrl + '" alt="Product Image">' +
+                  '</a>' +
+                  '</div>' +
+                  '<div class="product-title">' +
+                  '<a href="#" id="product-detail" data-id="' + product.id + '">' + product.name + '</a>' +
+                  '<div class="ratting">' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="product-price">' +
+                  '<div class="row">' +
+                  '<div class="col-md-4">' +
+                  '<h3><span>&#8377;</span>' + product.price + '</h3>' +
+                  '</div>' +
+                  '<div class="col-md-8 text-end gap-2 d-md-flex justify-content-md-end">' +
+                  '<button type="button" id="add-to-wishlist" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to wishlist"><span id="wishlist-icon"><i class="fa fa-heart"></i></span>' +
+                  '<div id="loader-wishlist" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '<button type="button" id="add-to-cart" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to cart"><span id="cart-icon"><i class="fa fa-shopping-cart"></span></i>' +
+                  '<div id="loader-cart" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>');
+
+
+              });
+              $('.slick-slide').css('padding', '0px');
+
+            }
+          });
+
+        }
+        loadSlickSlider();
+
+
+        // load similar products
+        function showSimilarProduct() {
+          var currentPage = 0;
+          var pageSize = 20;
+          $.ajax({
+            type: 'GET',
+            url: '/products?page=' + currentPage,
+            contentType: 'application/json',
+            success: function (response) {
+              var products = response.data.content;
+              const products_list = $('#similar-item');
+              products_list.empty();
+              $.each(products, function (index, product) {
+                var row =
+                  '<div id="product" class="col-md-3 mt-4">' +
+                  '<div class="product-item">' +
+                  '<div class="product-image">' +
+                  '<a href="" id="product-detail" data-id="' + product.id + '">' +
+                  '<img src="' + product.imageUrl + '" alt="Product Image">' +
+                  '</a>' +
+                  '</div>' +
+                  '<div class="product-title">' +
+                  '<a href="#"  id="product-detail" data-id="' + product.id + '">' + product.name + '</a>' +
+                  '<div class="ratting">' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '<i class="fa fa-star"></i>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="product-price">' +
+                  '<div class="row">' +
+                  '<div class="col-md-4">' +
+                  '<h3><span>&#8377;</span>' + product.price + '</h3>' +
+                  '</div>' +
+                  '<div class="col-md-8 d-grid gap-2 d-md-flex justify-content-md-end">' +
+                  '<button type="button" id="add-to-wishlist" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to wishlist"><span id="wishlist-icon"><i class="fa fa-heart"></i></span>' +
+                  '<div id="loader-wishlist" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '<button type="button" id="add-to-cart" data-id="' + product.id + '" class="btn" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                  'title="Add to cart"><span id="cart-icon"><i class="fa fa-shopping-cart"></span></i>' +
+                  '<div id="loader-cart" style="display: none;">' +
+                  '<div class="d-flex justify-content-center" >' +
+                  '<div class="spinner-border spinner-border-sm" role="status">' +
+                  '<span class="visually-hidden">Loading...</span>' +
+                  '</div>' +
+                  '</div >' +
+                  '</div > ' +
+                  '</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>'
+
+                $('#all-product-item').append(row);
+
+                $('#similar-item').append(row);
+
+              });
+            },
+            error: function (xhr, status, error) {
+              console.log('Something wrong on server, Please try again.');
+            },
+            complete: function () {
+              $('#loader-2').hide();
+            }
+          });
+        }
+        showSimilarProduct();
+      });
+
+    </script>
+  </div>
+</body>
+
+</html>

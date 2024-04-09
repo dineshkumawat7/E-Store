@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Checkout</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+    <!-- Checkout Start -->
+    <div class="checkout">
+      <div class="container-fluid">
+        <div class="row justify-content-center">
+
+          <div class="col-lg-6">
+            <div class="checkout-inner">
+              <div class="billing-address">
+                <div>
+                  <h2>Select Delivery Address</h2>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#addAddressModel">
+                    + Add new Address
+                  </button>
+                </div>
+                <hr>
+                <div id="loader-2">
+                  <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+                <fieldset>
+                  <div id="order-address">
+                    <!-- order address dynamically load -->
+
+                  </div>
+                  <div id="no-address" class="border rounded-3 p-4 text-center" style="display: none;">
+                    <h2>No any delivery address available.</h2>
+                    <p>First add a delivery address than after continue.</p>
+                  </div>
+
+                </fieldset>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="checkout-inner">
+              <div class="checkout-summary">
+                <h1>Cart Total</h1>
+                <p>Total Product Price<span>+ &#8377;<span id="amount"></span></p>
+                <p class="sub-total">Total Discount<span>- &#8377;<span id="discount"></span></p>
+                <p class="ship-cost">Delivery Charge<span>- &#8377;<span id="shippingCost">0</span></p>
+                <h2>Grand Total<span>&#8377;<span id="grandTotal"></span></h2>
+              </div>
+              <div style="padding: 12px 5px; margin: 15px 0px; background-color: #f3f6ff">
+                <p style="text-align: center; color: green; margin-bottom: 0px;">
+                  Yay! Your total discount is <span id="totalDiscount">₹378</span></p>
+              </div>
+              <button style="width: 100%; height: 50px;" class="btn" type="submit" id="delivery-address-btn">
+                <span id="btn-loader" style="padding: 0 35px; display: none;"><i
+                    class="fa fa-spinner fa-pulse"></i></span>
+                <span id="btn-text"> Continue</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal for add new address-->
+        <div class="modal fade" id="addAddressModel" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-light">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add a new delivery address</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="checkout-form" method="post" role="form">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <label class="small">Full name (First and Last name)<span class="text-danger">*</span></label>
+                      <input class="form-control" id="fullname" name="fullname" type="text">
+                      <p id="fullnameError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">E-mail<span class="text-danger">*</span></label>
+                      <input class="form-control" id="email" name="email" type="email">
+                      <p id="emailError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Mobile number<span class="text-danger">*</span></label>
+                      <input class="form-control" id="phone" name="phone" type="number">
+                      <p id="phoneError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Area, Street, Sector, Village<span class="text-danger">*</span></label>
+                      <input class="form-control" id="street" name="street" type="text">
+                      <p id="streetError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Town/City<span class="text-danger">*</span></label>
+                      <input class="form-control" id="city" name="city" type="text">
+                      <p id="cityError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Pincode<span class="text-danger">*</span></label>
+                      <input class=" form-control" id="pincode" name="pincode" type="text" maxlength="6">
+                      <p id="pincodeError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">State<span class="text-danger">*</span></label>
+                      <input class="form-control" id="state" name="state" type="text">
+                      <p id="stateError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Country/Region<span class="text-danger">*</span></label>
+                      <input class="form-control" id="country" name="country" type="text">
+                      <p id="countryError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer bg-light">
+                <p id="fieldError" class="text-danger text-end col-md-12" style="font-size: smaller;"></p>
+                <button type="button" class="model-btn" data-dismiss="modal">Close</button>
+                <button id="address-form" type="button" class="model-btn">
+                  <span id="add-btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>
+                  Save Address</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal for edit address-->
+        <div class="modal fade" id="editAddressModel" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-light">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit delivery address</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="checkout-form" method="post" role="form">
+
+                  <div class="row">
+                    <input class="form-control" value="" id="editId" name="id" type="text" hidden>
+                    <div class="col-md-12">
+                      <label class="small">Full name (First and Last name)<span class="text-danger">*</span></label>
+                      <input class="form-control" value="" id="editFullname" name="editFullname" type="text">
+                      <p id="EditFullnameError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">E-mail<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editEmail" name="editEmail" type="email">
+                      <p id="editEmailError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Mobile number<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editPhone" name="editPhone" type="number">
+                      <p id="editPhoneError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Area, Street, Sector, Village<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editStreet" name="street" type="text">
+                      <p id="editStreetError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Town/City<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editCity" name="city" type="text">
+                      <p id="editCityError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Pincode<span class="text-danger">*</span></label>
+                      <input class=" form-control" id="editPincode" name="pincode" type="text" maxlength="6">
+                      <p id="editPincodeError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">State<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editState" name="state" type="text">
+                      <p id="editStateError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                    <div class="col-md-12">
+                      <label class="small">Country/Region<span class="text-danger">*</span></label>
+                      <input class="form-control" id="editCountry" name="country" type="text">
+                      <p id="editCountryError" class="text-danger error" style="font-size: smaller;"></p>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer bg-light">
+                <p id="editFieldError" class="text-danger text-end col-md-12" style="font-size: smaller;"></p>
+                <button type="button" class="model-btn" data-dismiss="modal">Close</button>
+                <button id="edit-btn-submit" type="button" class="model-btn">
+                  <span id="edit-btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>
+                  Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/cart.js"></script>
+    <!-- Checkout End -->
+    <script>
+      $(document).ready(function () {
+        $('#loader').hide();
+
+        // load user order address
+        function loadOrderAddress() {
+          $.ajax({
+            type: 'GET',
+            url: '/order/getAllOrderAddress',
+            contentType: 'application/json',
+            success: function (response) {
+              var addressData = response.data;
+              if (addressData !== undefined) {
+                $('#no-address').hide();
+              } else {
+                $('#no-address').show();
+              }
+              const addressDataBody = $('#order-address');
+              addressDataBody.empty();
+              $.each(addressData, function (index, address) {
+                var content = '<div class="address-row">' +
+                  '<label>' +
+                  '<input type="radio" id="address" name="address" value="' + address.id + '">' +
+                  '<div class="address-text">' +
+                  '<div class="header-text">' +
+                  '<h5>' +
+                  '<bold>' + address.fullname + '</bold>' +
+                  '</h5>' +
+                  '<div class="gap-2">' +
+                  '<button id="edit-btn" data-bs-toggle="modal" data-bs-target="#editAddressModel" data-id="' + address.id + '">Edit</button>' +
+                  '<button class="text-danger mx-3" id="remove-btn" data-id="' + address.id + '">&times;</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '<p>' +
+                  '<span>' + address.street + ', </span>' +
+                  '<span>' + address.city + ', </span>' +
+                  '<span>' + address.state + '</span>' +
+                  '</p>' +
+                  '<p><span>' + address.state + '</span>' +
+                  '<span> -' + address.pincode + '</span>' +
+                  '<span>, ' + address.country + '</span> </p>' +
+                  '<p>' + address.email + '</p>' +
+                  '<p>' + address.phone + '</p>' +
+                  '</div>' +
+                  '</label>' +
+                  '</div>'
+
+                addressDataBody.append(content);
+              });
+            },
+            complete: function () {
+              $('#loader-2').hide();
+            }
+          });
+        }
+        loadOrderAddress();
+
+        $('#address-form').click(function (event) {
+          event.preventDefault();
+
+          var fullname = $('#fullname').val().trim();
+          var email = $('#email').val().trim();
+          var phone = $('#phone').val().trim();
+          var street = $('#street').val().trim();
+          var city = $('#city').val().trim();
+          var pincode = $('#pincode').val().trim();
+          var state = $('#state').val().trim();
+          var country = $('#country').val().trim();
+
+          // remove add order address validation error
+          $('#fullname').focus(function () {
+            $('#fullnameError').text('');
+            $('#fullname').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#email').focus(function () {
+            $('#emailError').text('');
+            $('#email').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#phone').focus(function () {
+            $('#phoneError').text('');
+            $('#phone').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#street').focus(function () {
+            $('#streetError').text('');
+            $('#street').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#city').focus(function () {
+            $('#cityError').text('');
+            $('#city').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#pincode').focus(function () {
+            $('#pincodeError').text('');
+            $('#pincode').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#state').focus(function () {
+            $('#stateError').text('');
+            $('#state').css('border-color', '');
+            $('#fieldError').text('');
+          });
+          $('#country').focus(function () {
+            $('#countryError').text('');
+            $('#country').css('border-color', '');
+            $('#fieldError').text('');
+          });
+
+          $('#addAddressModel').on('hidden.bs.modal', function () {
+            $('input').css('border-color', '');
+            $('.error').text('');
+          });
+
+          // check valid mobile number  
+          function isValidMobileNumber(mobileNumber) {
+            var regex = /^[0-9]{10}$/;
+            return regex.test(mobileNumber);
+          }
+
+          // check valid pincode 
+          function isValidPincode(pincode) {
+            var regex = /^\d{6}$/;
+            return regex.test(pincode);
+          }
+
+          $('#pincode').keyup(function () {
+
+          })
+
+          var valid = true;
+          if (fullname === '') {
+            $('#fullnameError').text('*Please enter your full name.');
+            $('#fullname').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (email === '') {
+            $('#emailError').text('*Please enter your email.');
+            $('#email').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (phone === '') {
+            $('#phoneError').text('*Please enter your mobile number.');
+            $('#phone').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (street === '') {
+            $('#streetError').text('*Please enter your area, street, sector, village.');
+            $('#street').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (city === '') {
+            $('#cityError').text('*Please enter your city/town.');
+            $('#city').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (pincode === '') {
+            $('#pincodeError').text('*Please enter your pincode.');
+            $('#pincode').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (state === '') {
+            $('#stateError').text('*Please enter your state.');
+            $('#state').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+            valid = false;
+          } else if (country === '') {
+            $('#countryError').text('*Please enter your country.');
+            $('#country').css('border-color', 'red');
+            $('#fieldError').text('*Please check above field.');
+          }
+
+          var formData = {
+            fullname: fullname,
+            email: email,
+            phone: phone,
+            street: street,
+            city: city,
+            pincode: pincode,
+            state: state,
+            country: country
+          }
+
+          if (valid) {
+            $('#add-btn-loader').show();
+            $.ajax({
+              type: 'POST',
+              url: '/order/addOrderAddress',
+              data: formData,
+              success: function (response) {
+                $('.toast').removeClass('bg-danger');
+                $('.toast').addClass('bg-success');
+                $('.toast').toast('show');
+                $('#msg').text(response.message);
+                $('#addAddressModel').modal('hide');
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                $('.toast').removeClass('bg-success');
+                $('.toast').addClass('bg-danger');
+                $('.toast').toast('show');
+                $('#msg').text(errors.message);
+              },
+              complete: function () {
+                $('#add-btn-loader').hide();
+                loadOrderAddress();
+              }
+            })
+          }
+        });
+
+        // load the edit address field and put values
+        $(document).on('click', '#edit-btn', function (event) {
+          event.preventDefault();
+          var addressId = $(this).data('id');
+          $.ajax({
+            type: 'GET',
+            url: '/order/getOrderAddress/' + addressId,
+            contentType: 'application/json',
+            success: function (response) {
+              var address = response.data;
+              $('#editId').val(addressId);
+              $('#editFullname').val(address.fullname);
+              $('#editEmail').val(address.email);
+              $('#editPhone').val(address.phone);
+              $('#editStreet').val(address.street);
+              $('#editCity').val(address.city);
+              $('#editPincode').val(address.pincode);
+              $('#editState').val(address.state);
+              $('#editCountry').val(address.country);
+            }
+          });
+
+        });
+
+        // remove edit order address validation error
+        $('#editFullname').focus(function () {
+          $('#editFullnameError').text('');
+          $('#editFullname').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editEmail').focus(function () {
+          $('#editEmailError').text('');
+          $('#editEmail').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editPhone').focus(function () {
+          $('#editPhoneError').text('');
+          $('#editPhone').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editStreet').focus(function () {
+          $('#editStreetError').text('');
+          $('#editStreet').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editCity').focus(function () {
+          $('#editCityError').text('');
+          $('#editCity').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editPincode').focus(function () {
+          $('#editPincodeError').text('');
+          $('#editPincode').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editState').focus(function () {
+          $('#editStateError').text('');
+          $('#editState').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+        $('#editCountry').focus(function () {
+          $('#editCountryError').text('');
+          $('#editCountry').css('border-color', '');
+          $('#editFieldError').text('');
+        });
+
+        $('#addAddressModel').on('hidden.bs.modal', function () {
+          $('input').css('border-color', '');
+          $('.error').text('');
+        });
+
+
+        // click event handler for update address
+        $(document).on('click', '#edit-btn-submit', function (event) {
+          event.preventDefault();
+          var id = $('#editId').val();
+          var fullname = $('#editFullname').val().trim();
+          var email = $('#editEmail').val().trim();
+          var phone = $('#editPhone').val().trim();
+          var street = $('#editStreet').val().trim();
+          var city = $('#editCity').val().trim();
+          var pincode = $('#editPincode').val().trim();
+          var state = $('#editState').val().trim();
+          var country = $('#editCountry').val().trim();
+
+          var valid = true;
+          if (fullname === '') {
+            $('#editFullnameError').text('*Please enter your full name.');
+            $('#editFullname').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (email === '') {
+            $('#editEmailError').text('*Please enter your email.');
+            $('#editEmail').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (phone === '') {
+            $('#editPhoneError').text('*Please enter your mobile number.');
+            $('#editPhone').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (street === '') {
+            $('#editStreetError').text('*Please enter your area, street, sector, village.');
+            $('#editStreet').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (city === '') {
+            $('#editCityError').text('*Please enter your city/town.');
+            $('#editCity').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (pincode === '') {
+            $('#editPincodeError').text('*Please enter your pincode.');
+            $('#editPincode').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (state === '') {
+            $('#editStateError').text('*Please enter your state.');
+            $('#editState').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+            valid = false;
+          } else if (country === '') {
+            $('#editCountryError').text('*Please enter your country.');
+            $('#editCountry').css('border-color', 'red');
+            $('#editFieldError').text('*Please check above field.');
+          }
+
+          var formData = {
+            fullname: fullname,
+            email: email,
+            phone: phone,
+            street: street,
+            city: city,
+            pincode: pincode,
+            state: state,
+            country: country
+          }
+
+          if (valid) {
+            $('#edit-btn-loader').show();
+            $.ajax({
+              type: 'PUT',
+              url: '/order/updateOrderAddress/' + id,
+              data: formData,
+              success: function (response) {
+                $('.toast').removeClass('bg-danger');
+                $('.toast').addClass('bg-success');
+                $('.toast').toast('show');
+                $('#msg').text(response.message);
+                $('#addAddressModel').modal('hide');
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                $('.toast').removeClass('bg-success');
+                $('.toast').addClass('bg-danger');
+                $('.toast').toast('show');
+                $('#msg').text(errors.message);
+              },
+              complete: function () {
+                $('#edit-btn-loader').hide();
+                loadOrderAddress();
+                $('#editAddressModel').modal('hide');
+              }
+            })
+          }
+        });
+
+        // delete delivery order address 
+        $(document).on('click', '#remove-btn', function (event) {
+          event.preventDefault();
+          var addressId = $(this).data('id');
+          $.ajax({
+            type: 'DELETE',
+            url: '/order/deleteOrderAddress/' + addressId,
+            contentType: 'application/json',
+            success: function (response) {
+              $('.toast').removeClass('bg-danger');
+              $('.toast').addClass('bg-success');
+              $('.toast').toast('show');
+              $('#msg').text(response.message);
+            },
+            error: function (xhr) {
+              var errors = xhr.responseJSON;
+              $('.toast').removeClass('bg-success');
+              $('.toast').addClass('bg-danger');
+              $('.toast').toast('show');
+              $('#msg').text(errors.message);
+            },
+            complete: function () {
+              loadOrderAddress();
+            }
+          });
+
+        });
+
+        $('#delivery-address-btn').click(function () {
+          var selectedOption = $("input[name='address']:checked").val();
+          if (selectedOption === undefined) {
+            $('.toast').removeClass('bg-success');
+            $('.toast').addClass('bg-danger');
+            $('.toast').toast('show');
+            $('#msg').text('Please select a Delivery Address.');
+          }
+        });
+
+        $('#order-address').on('change', '#address', function () {
+          var addressId = $(this).val();
+
+          $('#delivery-address-btn').click(function () {
+            $('#btn-loader').show();
+            $('#btn-text').hide();
+            $.ajax({
+              type: 'POST',
+              url: '/order/selectOrderAddress',
+              data: {
+                addressId: addressId
+              },
+              success: function () {
+                window.location.href = '/payment';
+              },
+              error: function () {
+                $('.toast').removeClass('bg-success');
+                $('.toast').addClass('bg-danger');
+                $('.toast').toast('show');
+                $('#msg').text('Internal server error, Please try again after some time.');
+              },
+              complete: function () {
+                $('#btn-loader').hide();
+                $('#btn-text').show();
+              }
+            });
+
+          });
+        });
+      });
+    </script>
+
+
+  </div>
+
+
+
+</body>
+
+</html>

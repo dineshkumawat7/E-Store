@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title ,content)">
+
+<head>
+  <meta charset="UTF-8">
+  <title th:replace="${title}"></title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <!-- Favicon -->
+  <link hraf="/img/favicon.ico" rel="icon">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+  <!-- CSS Libraries -->
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Source+Code+Pro:700,900&display=swap"
+    rel="stylesheet">
+
+
+  <!-- CSS Libraries -->
+  <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <link href="/lib/slick/slick.css" rel="stylesheet">
+  <link href="/lib/slick/slick-theme.css" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+  <!-- <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> -->
+  <!-- Template Stylesheet -->
+  <link href="/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/loader.css">
+
+  <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+  <style>
+    .loader {
+      background: transparent;
+      z-index: 999;
+      left: 44%;
+      padding: 0;
+      top: 25%;
+    }
+
+    @media (max-width: 768.98px) {
+
+      .loader {
+        top: 40%;
+        left: 32%;
+      }
+    }
+
+
+    .carousel {
+      margin: auto;
+      height: 400px;
+      width: 80%;
+    }
+
+    .carousel-item img {
+      object-fit: cover;
+      height: 400px;
+    }
+
+    @media (max-width: 768.98px) {
+      .carousel {
+        margin: auto;
+        height: 200px;
+        width: 100%;
+      }
+
+      .carousel-item img {
+        object-fit: cover;
+        height: 200px;
+      }
+
+    }
+
+
+
+    .navbar {
+      background-color: #333;
+    }
+
+    .navbar-nav {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 10px;
+      /* Add some space at the bottom for scrollbar */
+    }
+
+    .nav-item {
+      margin-right: 10px;
+      /* Adjust spacing between nav items */
+    }
+
+    .notification {
+      z-index: 999;
+      top: 80px;
+    }
+
+    @media (max-width: 768.98px) {
+      .notification {
+        z-index: 999;
+        top: 200px;
+      }
+    }
+
+    .dropdown-menu {
+      width: 20%;
+    }
+
+    @media (max-width: 768.98px) {
+      .dropdown-menu {
+        width: 58%;
+      }
+    }
+
+
+    div.scrollmenu {
+      background-color: #ffffff;
+      overflow: auto;
+      white-space: nowrap;
+      border-bottom: 1px solid #dddddd;
+      margin-bottom: 30px;
+      padding: 0px 40px;
+      text-align: center;
+    }
+
+    div.scrollmenu a {
+      display: inline-block;
+      text-align: center;
+      color: #353535;
+      padding: 5px 15px;
+      text-decoration: none;
+    }
+
+    div.scrollmenu a:hover {
+      background-color: #ffffff;
+      color: #5d76c5;
+    }
+
+    .dropdown-item:active {
+      background-color: #ffffff;
+      color: #ffffff;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- Loader start -->
+  <div id="loader" style="display: none;">
+    <div class="loader position-fixed">
+      <div class="d-flex justify-content-center top-50">
+        <div class="sk-fading-circle">
+          <div class="sk-circle1 sk-circle"></div>
+          <div class="sk-circle2 sk-circle"></div>
+          <div class="sk-circle3 sk-circle"></div>
+          <div class="sk-circle4 sk-circle"></div>
+          <div class="sk-circle5 sk-circle"></div>
+          <div class="sk-circle6 sk-circle"></div>
+          <div class="sk-circle7 sk-circle"></div>
+          <div class="sk-circle8 sk-circle"></div>
+          <div class="sk-circle9 sk-circle"></div>
+          <div class="sk-circle10 sk-circle"></div>
+          <div class="sk-circle11 sk-circle"></div>
+          <div class="sk-circle12 sk-circle"></div>
+        </div>
+      </div>
+      <h2 style="margin-top: -86px;" class="text-primary">Please Wait..</h2>
+    </div>
+  </div>
+  <!-- Loader end -->
+
+  <!-- Notification toasts start -->
+  <div aria-live="polite" aria-atomic="true"
+    class="notification d-flex position-fixed justify-content-center align-items-center m-auto w-100">
+    <!-- Then put toasts within -->
+    <div class="toast bg-success text-white w-auto " role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="msg">
+          Hello, world! This is a toast message.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  <!-- Notification toasts end -->
+
+  <!-- Bottom Bar Start -->
+  <div class="bottom-bar sticky-top">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-3">
+          <div class="logo">
+            <a href="/home">
+              <img width="45%" src="/img/logo.png" alt="Logo">
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="search">
+            <div>
+              <Button style="left: 0;cursor: auto;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+              </Button>
+            </div>
+            <input id="search-product" type="text" placeholder="Search for products">
+            <div class="search-result" style="text-align: start;">
+              <!-- data dynamically load -->
+            </div>
+            <button id="clear-btn" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="user">
+            <div>
+              <button class="dropdown-toggle" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown"
+                data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fa fa-user"></i> Account
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuClickableInside">
+                <li>
+                  <div id="userNotLogin">
+                    <div class="sign-up">
+                      New Customer?
+                      <div>
+                        <a class="dropdown-item" href="/registration"> Sign Up</a>
+                      </div>
+                    </div>
+                    <div class="sign-in">
+                      <a href="/login"><button style="padding: 2px 18px;">Login</button></a>
+                    </div>
+                  </div>
+                  <div id="userLogin">
+                    <h4 class="text-center">Hello <bold><span id="userName"></span></bold>
+                    </h4>
+                  </div>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-person-circle" viewBox="0 0 16 16">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path fill-rule="evenodd"
+                        d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                    </svg>My Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/wishlist">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-bag-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd"
+                        d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0M14 14V5H2v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1M8 7.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132" />
+                    </svg>Wishlist
+                    <span style="display: none;" class="badge text-bg-secondary"><span id="wishlistValue"></span></span>
+
+                  </a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/order">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-border-style" viewBox="0 0 16 16">
+                      <path
+                        d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm8 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-4 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm8 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-4-4a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                    Orders <span style="display: none;" class="badge text-bg-secondary"><span
+                        id="orderValue"></span></a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/coupon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-gift" viewBox="0 0 16 16">
+                      <path
+                        d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 14.5V7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A3 3 0 0 1 3 2.506zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43zM9 3h2.932l.023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0zM1 4v2h6V4zm8 0v2h6V4zm5 3H9v8h4.5a.5.5 0 0 0 .5-.5zm-7 8V7H2v7.5a.5.5 0 0 0 .5.5z" />
+                    </svg>Coupon</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="/contact">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-telephone" viewBox="0 0 16 16">
+                      <path
+                        d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
+                    </svg>Contact Us</a></li>
+                <div style="display: none;" id="logout">
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="/logout">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                        <path fill-rule="evenodd"
+                          d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                      </svg>Logout</a></li>
+                </div>
+
+              </ul>
+              <a href="/cart">
+                <button type="button" class="position-relative"> <i class="fa fa-shopping-cart"></i>
+                  <span
+                    style="display: none; background-color: RGBA(108, 117, 125, var(--bs-bg-opacity, 1)) !important;"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark-subtle">
+                    <span id="cartValue"></span>
+                    <span class="visually-hidden">unread messages</span>
+                  </span> Cart
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bottom Bar End -->
+
+  <!-- categories navbar start -->
+  <div class="scrollmenu">
+
+  </div>
+  <!-- categories navbar end -->
+
+  <!-- product category start-->
+
+
+  <!-- <div class="category-bar">
+      <div class="container text-center">
+        <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 justify-content-center">
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="60px" height="60px" src="/img/c-1.webp">
+                </div>
+
+              </div>
+              <div class="pt-2" \>All</div>
+            </a>
+          </div>
+
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-2.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Women's Fashion</div>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-3.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Men's Fashion</div>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-4.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Electronics</div>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-5.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Beauty</div>
+            </a>
+          </div>
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-6.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Kid's & Babies</div>
+            </a>
+
+          </div>
+          <div class="col">
+            <a href="#">
+              <div class="image-container">
+                <div>
+                  <img width="56px" height="56px" src="/img/c-6.jpg">
+                </div>
+
+              </div>
+              <div class="p-2">Kid's & Babies</div>
+            </a>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div> -->
+
+
+  <!-- product category end-->
+
+  <!-- main content start -->
+  <div th:replace="${content}">
+
+  </div>
+  <!-- main content end -->
+
+  <!-- Footer Start -->
+  <div class="footer">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="footer-widget">
+            <h2>Get in Touch</h2>
+            <div class="contact-info">
+              <p><i class="fa fa-map-marker"></i>123-Jaipur, Rajasthan, India</p>
+              <p><i class="fa fa-envelope"></i>dinesh7627000@gmail.com</p>
+              <p><i class="fa fa-phone"></i>+762-700-0907</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="footer-widget">
+            <h2>Follow Us</h2>
+            <div class="contact-info">
+              <div class="social">
+                <a href=""><i class="fab fa-twitter"></i></a>
+                <a href=""><i class="fab fa-facebook-f"></i></a>
+                <a href=""><i class="fab fa-linkedin-in"></i></a>
+                <a href=""><i class="fab fa-instagram"></i></a>
+                <a href=""><i class="fab fa-youtube"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="footer-widget">
+            <h2>Company Info</h2>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Condition</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="footer-widget">
+            <h2>Purchase Info</h2>
+            <ul>
+              <li><a href="#">Pyament Policy</a></li>
+              <li><a href="#">Shipping Policy</a></li>
+              <li><a href="#">Return Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row payment align-items-center">
+        <div class="col-md-6">
+          <div class="payment-method">
+            <h2>We Accept:</h2>
+            <img th:src="@{/img/payment-method.png}" alt="Payment Method" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="payment-security">
+            <h2>Secured By:</h2>
+            <img th:src="@{/img/godaddy.svg}" alt="Payment Security" />
+            <img th:src="@{/img/norton.svg}" alt="Payment Security" />
+            <img th:src="@{/img/ssl.svg}" alt="Payment Security" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer End -->
+
+  <!-- Footer Bottom Start -->
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 copyright">
+          <p>Copyright &copy; <a href="#"></a>. All Rights Reserved</p>
+        </div>
+
+        <div class="col-md-6 template-by">
+          <p>Developed by <a href="#">Dinesh Kumawat</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer Bottom End -->
+  <!-- Back to Top -->
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+  </div>
+  <!-- JavaScript Libraries -->
+
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script> -->
+  <script src="/lib/easing/easing.min.js"></script>
+  <script src="/lib/slick/slick.min.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="/js/main.js"></script>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <!-- Slick JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+
+  <script>
+    $(document).ready(function () {
+      // load category
+      function loadCategory() {
+        $.ajax({
+          type: 'GET',
+          url: '/category/all',
+          contentType: 'application/json',
+          success: function (response) {
+            var categoryData = response.data;
+            var categoryMenu = $('.scrollmenu');
+            categoryMenu.empty();
+            categoryMenu.append('<a id="product-filter" data-id="all" href="/product">All</a>');
+            $.each(categoryData, function (index, category) {
+              var categoryHTML = '<a id="product-filter" data-id="' + category.id + '" href="/product">' + category.name + '</a>'
+              categoryMenu.append(categoryHTML);
+            });
+          }
+        });
+      }
+      loadCategory();
+      $('#product-filter').click(function () {
+
+      });
+
+      //get product page
+      $(document).on('click', '#product-filter', function (event) {
+        event.preventDefault();
+        var categoryId = $(this).data('id');
+        localStorage.setItem('categoryId', categoryId);
+        $.ajax({
+          type: 'GET',
+          url: '/redirectProductPage',
+          success: function (response) {
+            window.location.href = response;
+          }
+        });
+      });
+
+    });
+  </script>
+</body>
+
+</html>

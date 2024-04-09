@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Registration</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+  
+
+    <!-- Login Start -->
+    <div class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6" style="margin: auto;">
+            <div class="login-form">
+              <h4 class="text-center">
+                <b>Create your account</b>
+              </h4>
+              <hr>
+              <form id="registration-form" role="form">
+                <!-- Form Row-->
+                <div class="row gx-3 ">
+                  <!-- Form Group (first name)-->
+                  <div class="col-md-6">
+                    <label class="small mb-1" for="firstname">First name<span class="text-danger">*</span></label>
+                    <input class="form-control small" type="text" placeholder="Enter first name.." name="firstname"
+                      id="firstname">
+                    <p id="firstnameError" style="font-size: smaller;" class="text-danger small">
+                    </p>
+                  </div>
+                  <!-- Form Group (last name)-->
+                  <div class="col-md-6">
+                    <label class="small mb-1" for="lastname">Last name</label>
+                    <input class="form-control small" type="text" id="lastname" placeholder="Enter last name.."
+                      name="lastname">
+                    <p id="lastnameError" style="font-size: smaller;" class="text-danger small"></p>
+                  </div>
+                </div>
+                <!-- Form Group (username)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="email">Email ID<span class="text-danger">*</span></label>
+                  <input class="form-control small" type="text" placeholder="Enter e-mail.." id="email" name="email">
+                  <p id="emailError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+                <!-- Form Group (phome number)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="phone">Phone number<span class="text-danger">*</span></label>
+                  <input class="form-control small" type="number" placeholder="Enter phone no.." name="phone"
+                    id="phone">
+                  <p id="phoneError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+                <!-- Form Group (password)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="password">Password<span class="text-danger">*</span></label>
+
+                  <input style="border-radius: 4px;" class="form-control small" type="password"
+                    placeholder="Enter password.." name="password" id="password">
+
+                  <p id="passwordError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+                <!-- Form Group (confirm password)-->
+                <div class="mb-3">
+                  <label class="small mb-1" for="confirmPassword">Confirm Password<span
+                      class="text-danger">*</span></label>
+                  <div class="input-group" id="show_hide_password">
+                    <input style="border-radius: 4px;" class="form-control small" type="password"
+                      placeholder="Confirm password.." name="confirmPassword" id="confirmPassword">
+                    <div class="input-group-addon">
+                      <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                    </div>
+                  </div>
+                  <p id="confirmPasswordError" style="font-size: smaller;" class="text-danger small">
+                  </p>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input small" style="font-size: medium;" type="checkbox" name="agree"
+                    id="agree">
+                  <label class="form-check-label small" for="agree">
+                    I accept the <a href="#">terms and conditions</a>
+                  </label>
+                  <p id="agreeError" style="font-size: smaller;" class="text-danger small"></p>
+                </div>
+
+                <!-- Save changes button-->
+                <button class="btn btn-primary small" type="submit">
+                  <div style="display: none;" class="spinner-border spinner-border-sm" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div> SignUp
+                </button>
+                <button class="btn btn-primary small" type="reset">Reset</button>
+                <div class="col-md-12 small mt-3" style="text-align: center;">
+                  If you have an account? <a th:href="@{/login}">Signin</a>
+                </div>
+              </form>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+
+        // remove validation error 
+        $('#firstname').focus(function () {
+          $('#firstnameError').text('');
+          $('#firstname').css('border-color', '');
+        });
+        $('#lastname').focus(function () {
+          $('#lastnameError').text('');
+          $('#lastname').css('border-color', '');
+        });
+        $('#email').focus(function () {
+          $('#emailError').text('');
+          $('#email').css('border-color', '');
+        });
+        $('#phone').focus(function () {
+          $('#phoneError').text('');
+          $('#phone').css('border-color', '');
+        });
+        $('#password').focus(function () {
+          $('#passwordError').text('');
+          $('#password').css('border-color', '');
+        });
+        $('#confirmPassword').focus(function () {
+          $('#confirmPasswordError').text('');
+          $('#confirmPassword').css('border-color', '');
+        });
+
+        // new user register
+        $('#registration-form').submit(function (event) {
+          event.preventDefault();
+          var firstname = $('#firstname').val().trim();
+          var lastname = $('#lastname').val().trim();
+          var email = $('#email').val().trim();
+          var phone = $('#phone').val().trim();
+          var password = $('#password').val().trim();
+          var confirmPassword = $('#confirmPassword').val().trim();
+          var agree = $('#agree').is(':checked');
+
+          var formData = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            phone: phone,
+            password: password,
+            confirmPassword: confirmPassword,
+            agree: agree
+          }
+
+          function isValidMobileNumber(mobileNumber) {
+            var regex = /^[0-9]{10}$/;
+            return regex.test(mobileNumber);
+          }
+
+          var valid = true;
+          if (firstname === '') {
+            $('#firstnameError').text('*Please enter your firstname.');
+            $('#firstname').css('border-color', 'red');
+            valid = false;
+          } else if (email === '') {
+            $('#emailError').text('*Please enter your email.');
+            $('#email').css('border-color', 'red');
+            valid = false;
+          } else if (phone === '') {
+            $('#phoneError').text('*Please enter your phone.');
+            $('#phone').css('border-color', 'red');
+            valid = false;
+          } else if (isValidMobileNumber(phone) === false) {
+            $('#phoneError').text('*Invalid mobile number.');
+            $('#phone').css('border-color', 'red');
+            valid = false;
+          }
+          else if (password === '') {
+            $('#passwordError').text('*Please enter your password.');
+            $('#password').css('border-color', 'red');
+            valid = false;
+          } else if (confirmPassword === '') {
+            $('#confirmPasswordError').text('*Please enter your confirm password.');
+            $('#confirmPassword').css('border-color', 'red');
+            valid = false;
+          } else if (!(password === confirmPassword)) {
+            $('#confirmPasswordError').text('*Password do not match.');
+            $('#confirmPassword').css('border-color', 'red');
+            valid = false;
+          }
+          else if (agree === false) {
+            $('#agreeError').text('*Please check terms and condition.');
+            valid = false;
+          }
+          if (valid) {
+            $('.spinner-border').show();
+            $.ajax({
+              type: 'POST',
+              url: '/registration/save',
+              data: formData,
+              success: function (response) {
+                if (response.status === 'success') {
+                  $('.toast').removeClass('bg-danger');
+                  $('.toast').addClass('bg-success');
+                  $('.toast').toast('show');
+                  $('#msg').text(response.message);
+                  $('#registration-form')[0].reset();
+                }
+              },
+              error: function (xhr, status, error) {
+                var errors = xhr.responseJSON;
+                $.each(errors, function (field, defaultMessage) {
+                  $('#' + field + 'Error').text(defaultMessage);
+                });
+
+                if (xhr.status === 409) {
+                  $('.toast').removeClass('bg-success');
+                  $('.toast').addClass('bg-danger');
+                  $('.toast').toast('show');
+                  $('#msg').text(errors.message);
+                } else if (xhr.status === 404) {
+                  $('.toast').removeClass('bg-success');
+                  $('.toast').addClass('bg-danger');
+                  $('.toast').toast('show');
+                  $('#msg').text(errors.message);
+                } else if (xhr.status === 500) {
+                  $('.toast').removeClass('bg-success');
+                  $('.toast').addClass('bg-danger');
+                  $('.toast').toast('show');
+                  $('#msg').text(errors.message);
+                }
+              },
+              complete: function () {
+                $('.spinner-border').hide();
+              }
+            });
+          }
+        });
+
+        $("#show_hide_password a").on('click', function (event) {
+          event.preventDefault();
+          if ($('#show_hide_password input').attr("type") == "text") {
+            $('#show_hide_password input').attr('type', 'password');
+            $('#show_hide_password i').addClass("fa-eye-slash");
+            $('#show_hide_password i').removeClass("fa-eye");
+          } else if ($('#show_hide_password input').attr("type") == "password") {
+            $('#show_hide_password input').attr('type', 'text');
+            $('#show_hide_password i').removeClass("fa-eye-slash");
+            $('#show_hide_password i').addClass("fa-eye");
+          }
+        });
+      });
+    </script>
+  </div>
+</body>
+
+</html>

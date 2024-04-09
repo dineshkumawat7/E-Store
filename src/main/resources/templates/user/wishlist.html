@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Wishlist</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+    <div id="loader-2">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wishlist Start -->
+    <div class="cart-page">
+      <div class="container-fluid">
+        <div id="wishlist" class="row" style="display: none;">
+          <div class="col-lg-10 m-auto">
+            <div class="cart-page-inner">
+              <div class="checkout-inner">
+
+                <div class="cart-product">
+                  <h4>Wishlist <span>(Total Items: </span><span id="totalItems"></span>)</h4>
+                  <div id="wishlist-items">
+                    <!-- cart items load dynamically -->
+                    <!-- <div class="content">
+                      <div class="product-img">
+                        <img width="100%" height="100%" src="\img\category-2.jpg">
+                      </div>
+                      <div class="product-detail">
+                        <div class="product-name">
+                          <h6>BUMMY PANTS Super Dry Leakage Proof Technolo Leakage Proof Technolo</h6>
+                        </div>
+                        <div class="product-price">
+                          <p>Price Per Item: &#8377;<span>635</span></p>
+                          <p>Quantity: <span>3</span></p>
+                          <p>Total Price: &#8377;<span>635</span></p>
+                        </div>
+                        <hr>
+                        <div class="action">
+                          <div class="product-name">
+                            <h6>Free Delivery</h6>
+                          </div>
+                          <div>
+                            <button>
+                              <span id="btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>
+                              <i class="fa fa-shopping-cart"></i> Add to Cart</button>
+                            <button>&times; Remove</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- if wishlist is empty -->
+        <div id="emptyWishlist" class="card-body cart mb-5" style="display: none;">
+          <div class="col-sm-10 empty-cart-cls text-center m-auto" style="border-radius: 5px;
+          border: 1px solid #dddddd;
+          background-color: #ffffff;
+          padding: 60px 0px;">
+            <img src="/img/no-wish-list.png" width="250" height="250" class="img-fluid mb-4 mr-3">
+            <h4>Add something to make me happy :)</h4>
+            <a href="/product" class="btn btn-primary cart-btn-transform m-3" data-abc="true"
+              style="padding: 8px 10px;">Continue
+              Shopping</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Wishlist End -->
+
+    <script>
+      $(document).ready(function () {
+        $('#loader').hide();
+
+        function wishlistValue() {
+          $.ajax({
+            type: 'GET',
+            url: '/wishlist/get',
+            contentType: 'application/json',
+            success: function (response) {
+              var wishlistData = response.data;
+              var totalWishlistItems = response.totalWishlistItems;
+              $('#wishlistValue').text(totalWishlistItems);
+            }
+          });
+        }
+
+        function cartValue() {
+          $.ajax({
+            type: 'GET',
+            url: '/cart/get',
+            contentType: 'application/json',
+            success: function (response) {
+              var cartItems = response.data;
+              var totalCartItems = response.totalCartItems;
+              $('#cartValue').text(totalCartItems);
+            }
+          });
+        }
+        // load wishlist
+        function showWishlist() {
+
+          $.ajax({
+            type: 'GET',
+            url: '/wishlist/get',
+            contentType: 'application/json',
+            success: function (response) {
+              var wishlistData = response.data;
+              var totalWishlistItems = response.totalWishlistItems;
+              $('#totalItems').text(totalWishlistItems);
+
+              if (Object.keys(wishlistData).length === 0) {
+                $('#emptyWishlist').show();
+                $('#wishlist').hide();
+              } else {
+                $('#wishlist').show();
+                $('#emptyWishlist').hide();
+              }
+
+              const wishlist = $('#wishlist-items');
+              wishlist.empty();
+              $.each(wishlistData, function (index, wishlistItem) {
+                var row =
+                  '<div class="content">' +
+                  '<div class="product-img">' +
+                  '<a href="#" id="product-detail" data-id="' + wishlistItem.productId + '">' +
+                  '<img width="100%" height="100%" src=" ' + wishlistItem.productImage + ' ">' +
+                  '</a>' +
+                  '</div>' +
+                  '<div class="product-detail">' +
+                  '<div class="product-name">' +
+                  '<h6>' + wishlistItem.productName + '</h6>' +
+                  '</div>' +
+                  '<div class="product-price">' +
+                  '<p>Price: &#8377;<span>' + wishlistItem.price + '</span></p>' +
+                  '</div>' +
+                  '<hr>' +
+                  '<div class="action">' +
+                  '<div class="product-name">' +
+                  '<h6>Free Delivery</h6>' +
+                  '</div>' +
+                  '<div>' +
+                  '<button id="add-to-cart" data-id="' + wishlistItem.productId + '" style="margin-right: 15px;" data-toggle="modal" data-target="#editItem">' +
+                  '<span id="btn-loader" style="display: none;"><i class="fa fa-spinner fa-pulse"></i></span>  ' +
+                  '<i class="fa fa-shopping-cart"></i>  ' +
+                  'Add to Cart</button>' +
+                  '<button id="remove-item" data-id="' + wishlistItem.productId + '" data-toggle="modal" data-target="#removeItem">&times; Remove</button>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>' +
+                  '</div>'
+
+                wishlist.append(row);
+              });
+
+            },
+            error: function (xhr, status, error) {
+              var errors = xhr.responseJSON;
+              $('.toast').removeClass('bg-success');
+              $('.toast').addClass('bg-danger');
+              $('.toast').toast('show');
+              $('#msg').text(errors.message);
+            },
+            complete: function () {
+              $('#loader-2').hide();
+            }
+          });
+        }
+        showWishlist();
+
+        // remove wishlist item
+        $(document).on('click', '#remove-item', function (event) {
+          event.preventDefault();
+          $('#loader').hide();
+          var productId = $(this).data('id');
+          $.ajax({
+            type: 'DELETE',
+            url: '/wishlist/removeWishlistItem',
+            data: {
+              productId: productId
+            },
+            success: function (response) {
+              $('.toast').removeClass('bg-danger');
+              $('.toast').addClass('bg-success');
+              $('.toast').toast('show');
+              $('#msg').text(response.message);
+              showWishlist();
+              wishlistValue();
+            },
+            error: function (xhr, status, error) {
+              var errors = xhr.responseJSON;
+              $('.toast').removeClass('bg-success');
+              $('.toast').addClass('bg-danger');
+              $('.toast').toast('show');
+              $('#msg').text(errors.message);
+            }
+          });
+        });
+      });
+    </script>
+  </div>
+</body>
+
+</html>

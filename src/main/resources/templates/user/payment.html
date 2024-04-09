@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+  <title>Payment</title>
+</head>
+
+<body>
+  <div th:fragment="content">
+
+
+    <!-- Payment Start -->
+    <div class="checkout">
+      <div class="container-fluid">
+        <div class="row justify-content-center">
+
+          <div class="col-lg-6">
+            <div class="checkout-inner">
+
+              <div class="checkout-payment">
+                <div class="payment-methods">
+                  <h1>Select Payment Methods</h1>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" value="UPI" class="custom-control-input" id="payment-1" name="payment">
+                      <label class="custom-control-label" for="payment-1">UPI</label>
+                    </div>
+                    <div class="payment-content" id="payment-1-show">
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt
+                        orci
+                        ac eros volutpat maximus lacinia quis diam.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" value="Wallet" class="custom-control-input" id="payment-2" name="payment">
+                      <label class="custom-control-label" for="payment-2">Wallet</label>
+                    </div>
+                    <div class="payment-content" id="payment-2-show">
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt
+                        orci
+                        ac eros volutpat maximus lacinia quis diam.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" value="Debit/Credit Cards" class="custom-control-input" id="payment-3"
+                        name="payment">
+                      <label class="custom-control-label" for="payment-3">Debit/Credit Cards</label>
+                    </div>
+                    <div class="payment-content" id="payment-3-show">
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt
+                        orci
+                        ac eros volutpat maximus lacinia quis diam.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" value="Net Banking" class="custom-control-input" id="payment-4"
+                        name="payment">
+                      <label class="custom-control-label" for="payment-4">Net Banking</label>
+                    </div>
+                    <div class="payment-content" id="payment-4-show">
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt
+                        orci
+                        ac eros volutpat maximus lacinia quis diam.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="payment-method">
+                    <div class="custom-control custom-radio">
+                      <input type="radio" value="Cash on Delivery" class="custom-control-input" id="payment-5"
+                        name="payment">
+                      <label class="custom-control-label" for="payment-5">Cash on Delivery</label>
+                    </div>
+                    <div class="payment-content" id="payment-5-show">
+                      <p>
+                        Pay cash on delivery
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="checkout-inner">
+              <div class="checkout-summary">
+                <h1>Cart Total</h1>
+                <p>Total Product Price<span>+ &#8377;<span id="amount"></span></p>
+                <p class="sub-total">Total Discount<span>- &#8377;<span id="discount"></span></p>
+                <p class="ship-cost">Delivery Charge<span>- &#8377;<span id="shippingCost">0</span></p>
+                <h2>Grand Total<span>&#8377;<span id="grandTotal"></span></h2>
+              </div>
+              <div style="padding: 12px 5px; margin-top: 15px; background-color: #f3f6ff">
+                <p style="text-align: center; color: green; margin-bottom: 0px;">
+                  Yay! Your total discount is <span id="totalDiscount">₹378</span></p>
+              </div>
+              <button style="width: 100%; height: 50px;" class="btn" type="submit" id="payment-btn">
+                <span id="btn-loader" style="padding: 0 35px; display: none;"><i
+                    class="fa fa-spinner fa-pulse"></i></span>
+                <span id="btn-text"> Continue</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Payment end -->
+    <script src="/js/cart.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('#payment-btn').click(function () {
+          var paymentMode = $('input[name="payment"]:checked').val();
+          if (paymentMode === undefined) {
+            $('.toast').removeClass('bg-success');
+            $('.toast').addClass('bg-danger');
+            $('.toast').toast('show');
+            $('#msg').text('Please select a payment method.');
+            return;
+          }
+
+          $('#btn-loader').show();
+          $('#btn-text').hide();
+          $.ajax({
+            type: 'POST',
+            url: '/order/orderPayment',
+            data: {
+              paymentMode: paymentMode
+            },
+            success: function (response) {
+              window.location.href = '/orderSummary';
+            },
+            error: function (xhr) {
+              var errors = xhr.responseJSON;
+              $('.toast').removeClass('bg-success');
+              $('.toast').addClass('bg-danger');
+              $('.toast').toast('show');
+              $('#msg').text(errors.message);
+            },
+            complete: function () {
+              $('#btn-loader').hide();
+              $('#btn-text').show();
+            }
+          })
+        });
+      });
+    </script>
+  </div>
+
+</body>
+
+</html>

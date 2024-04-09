@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/base :: layout(~{::title}, ~{::content})}">
+
+<head>
+    <title>Add Product</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-10 m-auto">
+                        <div>
+                            <div class="row">
+                                <div>
+                                    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                        <ol class="breadcrumb" style="background-color: transparent;font-size: 20px;">
+                                            <li class="breadcrumb-item"><a id="dashboard-fetch-btn" href="#">Admin</a>
+                                            </li>
+                                            <li class="breadcrumb-item"><a id="dashboard-fetch-btn" href="#">Product</a>
+                                            </li>
+                                            <li class="breadcrumb-item active" aria-current="page">Add New</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-4 d-md-flex justify-content-md-start">
+                            <a href="/admin/product"><button class="btn btn-primary btn-xs"
+                                    type="button">Back</button></a>
+                        </div>
+                        <div class="card mt-1">
+                            <div class="card-header">
+                                <div class="card-title col-md-10">
+                                    ADD PRODUCT
+                                    <p>Please fill the form bellow.</p>
+                                </div>
+                            </div>
+                            <div class="card-body" style="margin: 0px 10px 0px 10px;">
+
+                                <form id="product-form" role="form" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="mb-1 col-md-12">
+                                            <label class="form-label" for="category">Select Product
+                                                Category:</label>
+                                            <select class="form-control form-control-sm" id="category" name="category">
+                                                <option value="" selected>select category</option>
+                                            </select>
+                                            <p class="text-danger error" id="categoryError" style="font-size: small;">
+                                            </p>
+                                        </div>
+
+
+                                        <div class="mb-1 col-md-12">
+                                            <label class="form-label" for="name">Name:</label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                placeholder="Enter product name.." name="name" id="name">
+                                            <p class="text-danger error" id="nameError" style="font-size: small;"></p>
+                                        </div>
+
+                                        <div class="mb-1 col-md-6">
+                                            <div>
+                                                <label class="form-label" for="price">Price:</label>
+                                                <input type="number" class="form-control form-control-sm"
+                                                    placeholder="Enter product price.." name="price" id="price">
+                                                <p class="text-danger error" id="priceError" style="font-size: small;">
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label class="form-label" for="color">Color:</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    placeholder="Enter product color.." name="color" id="color">
+                                                <p class="text-danger fs-1 error" id="colorError"
+                                                    style="font-size: small;">
+                                                </p>
+                                            </div>
+
+                                            <label class="form-label">Is Product Featured Type: </label><br />
+                                            <div class="form-check" style="padding-left: 0px;">
+                                                <div>
+                                                    <label class="form-radio-label">
+                                                        <input class="form-radio-input" type="radio" name="featured"
+                                                            value="false" checked="">
+                                                        <span class="form-radio-sign">No</span>
+                                                    </label>
+                                                    <label class="form-radio-label ml-3">
+                                                        <input class="form-radio-input" type="radio" name="featured"
+                                                            value="true">
+                                                        <span class="form-radio-sign">Yes</span>
+                                                    </label>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="mb-1 col-md-6">
+                                            <label for="image">Upload Product image:</label>
+                                            <div class="image-container mb-3 w-auto" style="padding: 5px; ">
+                                                <div style="border: 1px dashed #ced4da;
+                                                   width: 100%; height: 100%;border-radius: 4px;padding: 5px;">
+                                                    <h6 class="text-center align-items-center d-none"
+                                                        style="padding-top: 19%;" id="no-image-text">Choose a product
+                                                        image.</h6>
+                                                    <img id="imgPreview" width="100%" height="100%"
+                                                        style="object-fit: contain;" src="" alt="..">
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex justify-content-center">
+                                                <div class="btn" style="background-color: #0d6efd;">
+                                                    <label class="form-label mb-auto" for="customFile2">
+                                                        <span style="color: white;"><i
+                                                                class="fa fa-fw fa-camera"></i>Upload Image</span>
+                                                    </label>
+                                                    <input type="file" class="form-control d-none" id="customFile2" />
+                                                </div>
+                                                <button id="remove-image" class="btn btn-primary mx-1" type="button">
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                            <p id="fileError" style="font-size: small;" class="text-danger small">
+                                            </p>
+
+                                        </div>
+                                        <div class="mb-1 col-md-12">
+                                            <label class="form-label" for="manufacturer">Manufacturer:</label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                placeholder="Enter product manufacturer.." name="manufacturer"
+                                                id="manufacturer">
+                                            <p class="text-danger error" id="manufacturerError"
+                                                style="font-size: small;"></p>
+                                        </div>
+                                        <div class="mb-1 col-md-12">
+                                            <label class="form-label" for="description">Description:</label>
+                                            <textarea class="form-control" id="description" name="description" rows="3"
+                                                placeholder="Enter product description.."></textarea>
+                                            <p class="text-danger error" id="descriptionError"
+                                                style="font-size: small;"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-action">
+                                        <p class="text-danger error" id="fieldError" style="font-size: small;"></p>
+                                        </p>
+                                        <button class="btn btn-success" type="submit">
+                                            <span id="btn-loader" style="display: none;">
+                                                <i class="fa fa-spinner fa-pulse"></i></span>
+                                            Submit</button>
+                                        <button class="btn btn-danger" type="reset">Reset</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                // close the notification
+                $('#toast-close').click(function () {
+                    $('#toast').hide(500);
+
+                })
+
+                // Hide the toast message after 3 seconds (3000 milliseconds)
+                function hideToast() {
+                    setTimeout(function () {
+                        $('#toast').fadeOut();
+                    }, 5000);
+
+                };
+
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/admin/category/all',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $.each(response.data, function (index, category) {
+                            var row =
+                                '<option value="' + category.id + '"> ' + category.name + ' </option>'
+                            $('#category').append(row);
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 404) {
+                            alert("There is no any category available, first add some categories.");
+                        } else {
+                            alert(error);
+                        }
+                    }
+                });
+
+                $('#customFile2').change(function (e) {
+                    file = this.files[0];
+                    var filename = file.name;
+                    var fileExtension = filename.split('.').pop().toLowerCase();
+                    if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') {
+                        $('#fileError').text('*Only PNG, JPEG, or JPG files are allowed.');
+                        return;
+                    }
+                    if (file) {
+                        let reader = new FileReader();
+                        reader.onload = function (event) {
+                            $("#imgPreview")
+                                .attr("src", event.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+
+                // Listen for focus event on input field
+                $('input, textarea, select, #category').focus(function () {
+                    $('input').css('border-color', '');
+                    $('#category').css('border-color', '');
+                    $('textarea').css('border-color', '');
+                    var errorMessage = $(this).attr('id') + 'Error';
+                    $('#' + errorMessage).text('');
+                    $('#fieldError').text('');
+                })
+
+
+                $('.btn').click(function () {
+                    $('#fileError').text('');
+                });
+
+                // Click event handler for add product button
+                $('#product-form').submit(function (event) {
+                    event.preventDefault();
+
+                    var categoryId = $('#category').val().trim();
+                    var name = $('#name').val().trim();
+                    var price = $('#price').val();
+                    var color = $('#color').val().trim();
+                    var manufacturer = $('#manufacturer').val().trim();
+                    var description = $('#description').val().trim();
+                    var featured = $('input[name="featured"]:checked').val();
+                    var img = $('#customFile2')[0];
+                    var image = document.getElementById('customFile2').files[0];
+
+
+                    var valid = true;
+                    if (categoryId === '') {
+                        $('#categoryError').text('*Please select a category.');
+                        $('#category').css('border-color', 'red');
+                        valid = false;
+                    } else if (name === '') {
+                        $('#nameError').text('*Please enter product name.');
+                        $('#name').css('border-color', 'red');
+                        valid = false;
+                    }
+                    else if (price === '') {
+                        $('#priceError').text('*Please enter product price.');
+                        $('#price').css('border-color', 'red');
+                        valid = false;
+                    }
+                    else if (color === '') {
+                        $('#colorError').text('*Please enter product color.');
+                        $('#color').css('border-color', 'red');
+                        valid = false;
+                    }
+                    else if (img.files.length === 0) {
+                        $('#fileError').text('*Please upload a product image.');
+
+                        valid = false;
+                    }
+                    else if (manufacturer === '') {
+                        $('#manufacturerError').text('*Please enter product manufacturer.');
+                        $('#manufacturer').css('border-color', 'red');
+                        valid = false;
+                    }
+                    else if (description === '') {
+                        $('#descriptionError').text('*Please enter product description.');
+                        $('#description').css('border-color', 'red');
+                        valid = false;
+                    }
+
+                    if (valid === false) {
+                        $('#fieldError').text('*Please check above fields.');
+                    }
+
+                    var formData = new FormData();
+                    formData.append('categoryId', categoryId);
+                    formData.append('name', name);
+                    formData.append('price', price);
+                    formData.append('color', color);
+                    formData.append('featured', featured);
+                    formData.append('manufacturer', manufacturer);
+                    formData.append('description', description);
+                    formData.append('image', image);
+
+                    if (valid) {
+                        $('#btn-loader').show();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/admin/product/add',
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            success: function (response) {
+                                $('.toast').removeClass("bg-danger border-danger");
+                                $('#msg').text(response.message);
+                                $('.toast').addClass("bg-success border-success");
+                                $('#toast').show();
+                                $('#product-form')[0].reset();
+                            },
+                            error: function (xhr, status, error) {
+                                var errors = xhr.responseJSON;
+                                $('.toast').removeClass("bg-success border-success");
+                                $('#msg').text(errors.message);
+                                $('.toast').addClass("bg-danger border-danger");
+                                $('#toast').show();
+                            },
+                            complete: function () {
+                                hideToast();
+                                $('#btn-loader').hide();
+                            }
+                        });
+                    }
+
+                });
+
+            });
+        </script>
+    </div>
+</body>
+
+</html>
